@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Evermore – The Complete Wedding Planner</title>
+<style>
+:root{
+  --bg:#fbfbfd; --card:#ffffff; --card2:#f5f5f7; --text:#1d1d1f; --muted:#6e6e73;
+  --line:rgba(0,0,0,.08); --line2:rgba(0,0,0,.22); --blue:#0071e3; --pink:#ff375f;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 30px rgba(0,0,0,.06);
+  --glass:rgba(255,255,255,.72); --amber:#c93400; --amberbg:rgba(255,159,10,.16); --green:#248a3d;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--text:#f5f5f7;--muted:#a1a1a6;--line:rgba(255,255,255,.12);--line2:rgba(255,255,255,.3);
+  --blue:#2997ff;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 30px rgba(0,0,0,.4);--glass:rgba(28,28,30,.72);--amber:#ffb340;--amberbg:rgba(255,159,10,.2);--green:#30d158}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.47;letter-spacing:-.01em}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:22px;height:52px}
+.brand{font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
+.brand i{font-style:normal;background:linear-gradient(135deg,#ff6a88,#ff375f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a.l{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s}
+.nav a.l:hover{color:var(--text)}
+.nav .sp{flex:1}
+.navpill{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--card2);color:var(--text);font-variant-numeric:tabular-nums}
+@media(max-width:620px){.nav a.l{display:none}}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;text-align:center;padding:84px 0 70px}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;z-index:0;animation:float 18s ease-in-out infinite}
+.orb.a{width:420px;height:420px;background:#ff9ab3;left:-80px;top:-100px}
+.orb.b{width:380px;height:380px;background:#a7c8ff;right:-60px;top:20px;animation-delay:-6s}
+.orb.c{width:320px;height:320px;background:#ffe39a;left:40%;bottom:-160px;animation-delay:-11s}
+@media(prefers-color-scheme:dark){.orb{opacity:.28}}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,30px) scale(1.12)}}
+.hero .wrap{position:relative;z-index:1}
+.eyebrow{font-size:15px;font-weight:600;color:var(--pink);margin:0 0 10px}
+h1{font-size:clamp(40px,7.4vw,80px);line-height:1.05;letter-spacing:-.035em;margin:0 0 18px;font-weight:700}
+h1 .g{background:linear-gradient(100deg,#ff375f,#ff9f0a 45%,#bf5af2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:clamp(17px,2.2vw,22px);color:var(--muted);max-width:640px;margin:0 auto 38px;letter-spacing:-.015em}
+.setup{max-width:760px;margin:0 auto;padding:22px;border-radius:26px;background:var(--glass);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--line);box-shadow:var(--shadow);text-align:left}
+.setup .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.setup .grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 6px 4px;text-transform:uppercase;letter-spacing:.04em}
+.field input{width:100%;height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:17px;outline:none;transition:box-shadow .2s,border-color .2s}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 25%,transparent)}
+.field.date input{font-weight:600}
+.setup .row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:18px;flex-wrap:wrap}
+.setup .hint{font-size:13px;color:var(--muted)}
+.btn{border:0;border-radius:99px;padding:12px 22px;font-weight:600;font-size:15px;background:var(--blue);color:#fff;transition:transform .15s,filter .2s;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--card2);color:var(--text)}
+.btn.sm{padding:8px 16px;font-size:13px}
+
+/* SECTIONS */
+section{padding:54px 0}
+.sec-h{font-size:clamp(30px,4.4vw,48px);letter-spacing:-.03em;line-height:1.1;margin:0 0 8px;font-weight:700}
+.sec-p{color:var(--muted);font-size:19px;margin:0 0 30px;max-width:620px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* OVERVIEW */
+.ov{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.card{background:var(--card);border-radius:24px;padding:24px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.ring{grid-column:span 5;display:flex;align-items:center;gap:22px}
+.count{grid-column:span 7;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,#ff375f 0%,#bf5af2 100%);color:#fff;border:0;position:relative;overflow:hidden}
+.next{grid-column:span 7}.stats{grid-column:span 5;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+@media(max-width:860px){.ring,.count,.next,.stats{grid-column:span 12}}
+.ringsvg{width:128px;height:128px;flex:none;transform:rotate(-90deg)}
+.ringsvg circle{fill:none;stroke-width:12;stroke-linecap:round}
+.ringsvg .bg{stroke:var(--card2)}
+.ringsvg .fg{stroke:url(#rg);stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)}
+.ringtxt .big{font-size:48px;font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.ringtxt .sm{color:var(--muted);font-size:15px;margin-top:6px}
+.count .lab{font-size:13px;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.count .num{font-size:clamp(56px,9vw,92px);font-weight:700;letter-spacing:-.05em;line-height:1;margin:6px 0;font-variant-numeric:tabular-nums}
+.count .det{font-size:17px;opacity:.92}
+.count::after{content:"♥";position:absolute;right:-10px;bottom:-60px;font-size:240px;opacity:.12;line-height:1}
+.next h3,.stats h3{margin:0 0 12px;font-size:17px;letter-spacing:-.02em}
+.nx{display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left}
+.nx:first-of-type{border-top:0}
+.nx .d{font-size:12px;font-weight:600;color:var(--muted);min-width:78px}
+.nx .t{flex:1;font-weight:500}
+.nx:hover .t{color:var(--blue)}
+.stat{background:var(--card2);border-radius:18px;padding:16px}
+.stat b{display:block;font-size:30px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted)}
+.banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--card2);border-radius:18px;padding:14px 18px;margin-bottom:18px;font-size:15px}
+.banner.warn{background:var(--amberbg)}
+
+/* TOOLBAR */
+.toolbar{position:sticky;top:52px;z-index:40;background:var(--glass);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  margin:0 -22px 18px;padding:12px 22px;border-bottom:1px solid var(--line)}
+.tb1{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--card2);border-radius:11px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:9px;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s}
+.seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.14);font-weight:600}
+.search{flex:1;min-width:150px;height:34px;border-radius:11px;border:0;background:var(--card2);padding:0 12px;font-size:14px;outline:none}
+.search:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 30%,transparent)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:5px 13px;font-size:12.5px;font-weight:500;display:flex;gap:7px;align-items:center;transition:all .2s}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
+.chip.on{background:var(--text);color:var(--bg);border-color:transparent}
+
+/* PHASES */
+.phase{margin-bottom:22px;background:var(--card);border-radius:26px;box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden}
+.ph-head{width:100%;border:0;background:none;text-align:left;padding:22px 24px;display:grid;grid-template-columns:1fr auto;gap:2px 16px;align-items:center}
+.ph-title{font-size:22px;font-weight:700;letter-spacing:-.025em}
+.ph-sub{font-size:14px;color:var(--muted);grid-column:1}
+.ph-right{grid-column:2;grid-row:1/3;display:flex;align-items:center;gap:14px}
+.ph-count{font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ph-bar{width:70px;height:6px;border-radius:9px;background:var(--card2);overflow:hidden}
+.ph-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff9f0a,#ff375f);border-radius:9px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.phase.complete .ph-bar i{background:linear-gradient(90deg,#30d158,#64d2ff)}
+.chev{width:20px;height:20px;transition:transform .3s;color:var(--muted)}
+.phase.closed .chev{transform:rotate(-90deg)}
+.phase.closed .items{display:none}
+.items{list-style:none;margin:0;padding:0 12px 12px}
+.item{display:flex;gap:14px;padding:14px 12px;border-radius:16px;transition:background .25s}
+.item:hover{background:var(--card2)}
+.item.flash{animation:flash 1.6s}
+@keyframes flash{0%,60%{background:color-mix(in srgb,var(--blue) 22%,transparent)}100%{background:transparent}}
+.ck{position:relative;flex:none;width:28px;height:28px;margin-top:1px;cursor:pointer}
+.ck input{position:absolute;inset:0;opacity:0;margin:0;width:100%;height:100%;cursor:pointer}
+.box{position:absolute;inset:0;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;transition:background .25s,border-color .25s}
+.box svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .35s .08s}
+.ck input:hover+.box{border-color:var(--pink)}
+.ck input:checked+.box{background:linear-gradient(135deg,#ff6a88,#ff375f);border-color:transparent;animation:pop .5s}
+.ck input:checked+.box svg{stroke-dashoffset:0}
+.ck input:focus-visible+.box{outline:3px solid var(--blue);outline-offset:2px}
+@keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.3)}100%{transform:scale(1)}}
+.body{flex:1;min-width:0}
+.title{font-size:17px;font-weight:600;letter-spacing:-.015em;transition:color .25s}
+.note{font-size:14.5px;color:var(--muted);margin-top:2px}
+.item.done .title{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line2)}
+.item.done .note{opacity:.6}
+.meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;align-items:center}
+.tag,.pill{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.tag{color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.pill{background:var(--card2);color:var(--text)}
+.pill.t{color:var(--muted);font-weight:500}
+.pill.late{background:var(--amberbg);color:var(--amber)}
+.item.done .pill.late{display:none}
+.item .del{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;align-self:flex-start;border-radius:50%;width:30px;height:30px}
+.item .del:hover{background:var(--card2);color:var(--pink)}
+.empty{text-align:center;color:var(--muted);padding:48px 0;font-size:17px}
+
+/* ADD */
+.add{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;padding:18px;background:var(--card);border:1px dashed var(--line2);border-radius:22px;align-items:center}
+.add input[type=text]{flex:2;min-width:180px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card2);padding:0 14px;outline:none}
+.add input[type=date]{height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card2);padding:0 12px;outline:none}
+
+/* CALENDAR */
+.calwrap{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+@media(max-width:860px){.calwrap{grid-template-columns:1fr}}
+.cal{padding:22px}
+.cal-h{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.cal-h h3{flex:1;margin:0;font-size:24px;letter-spacing:-.03em}
+.nv{border:0;background:var(--card2);width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1}
+.nv:hover{background:var(--line)}
+.wd,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd span{text-align:center;font-size:12px;font-weight:600;color:var(--muted);padding:6px 0;text-transform:uppercase;letter-spacing:.04em}
+.day{position:relative;aspect-ratio:1/1;border:0;background:transparent;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:16px;font-weight:500;transition:background .2s,transform .15s}
+.day:hover{background:var(--card2)}.day:active{transform:scale(.94)}
+.day.o{color:var(--muted);opacity:.45}
+.day.today .n{background:var(--blue);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:700}
+.day.sel{background:var(--card2);box-shadow:inset 0 0 0 2px var(--text)}
+.day.wed{background:linear-gradient(135deg,#ff375f,#bf5af2);color:#fff;font-weight:700}
+.day.wed .n{background:none;color:#fff}
+.day.wed.sel{box-shadow:inset 0 0 0 2px #fff,0 0 0 2px var(--pink)}
+.dots{display:flex;gap:3px;height:6px}
+.dots i{width:5px;height:5px;border-radius:50%;background:var(--blue)}
+.dots i.l{background:#ff9f0a}.dots i.d{background:#30d158}
+.day.wed .dots i{background:#fff}
+.panel{padding:24px}
+.panel h3{margin:0;font-size:20px;letter-spacing:-.025em}
+.panel .bd{display:inline-block;margin:8px 0 12px;font-size:12px;font-weight:700;background:linear-gradient(135deg,#ff375f,#bf5af2);color:#fff;border-radius:99px;padding:3px 11px}
+.pitem{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.pitem .title{font-size:15.5px}
+.pitem .tm{font-size:12.5px;color:var(--muted)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12.5px;color:var(--muted)}
+.legend span{display:flex;gap:6px;align-items:center}
+.legend i{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+
+/* FOOTER / TOAST */
+.tools{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:40px 0 70px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;z-index:10000;background:rgba(30,30,32,.92);color:#fff;
+  padding:12px 22px;border-radius:99px;font-size:15px;font-weight:500;pointer-events:none;transition:all .45s cubic-bezier(.2,.8,.2,1);backdrop-filter:blur(14px);box-shadow:0 10px 40px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+.toast.show{transform:translate(-50%,0);opacity:1}
+#confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999}
+
+@media print{
+  .nav,.hero .orb,.toolbar,.add,.tools,#confetti,.toast,.calwrap,#calsec,.del{display:none!important}
+  .phase.closed .items{display:block!important}
+  .phase,.card{box-shadow:none;break-inside:avoid;border:1px solid #ccc}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#000}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><i>♥</i> Evermore</a>
+    <a class="l" href="#overview">Overview</a>
+    <a class="l" href="#checklist">Checklist</a>
+    <a class="l" href="#calendar">Calendar</a>
+    <span class="sp"></span>
+    <span class="navpill" id="navPill" title="Overall progress">0% done</span>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+  <div class="wrap">
+    <p class="eyebrow">The complete wedding planner</p>
+    <h1 id="heroTitle">Plan the wedding.<br><span class="g">Enjoy the journey.</span></h1>
+    <p class="sub">Every step from “we’re engaged” to “thank-you notes sent”, laid out on a timeline built around your date. Tick things off and celebrate as you go.</p>
+
+    <div class="setup" id="setup">
+      <div class="grid">
+        <div class="field"><label for="n1">Your name</label><input id="n1" type="text" placeholder="e.g. Alex" autocomplete="off"></div>
+        <div class="field"><label for="n2">Partner’s name</label><input id="n2" type="text" placeholder="e.g. Sam" autocomplete="off"></div>
+        <div class="field date"><label for="wdate">Wedding date</label><input id="wdate" type="date"></div>
+        <div class="field"><label for="wtime">Ceremony start time</label><input id="wtime" type="time" value="15:00"></div>
+      </div>
+      <div class="row">
+        <span class="hint" id="setupHint">Pick your date and every task gets a suggested date and time. You can change it any time.</span>
+        <span style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn ghost" id="btnReset2">Reset all fields</button><a class="btn" href="#checklist">Start planning</a></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="overview" class="reveal">
+  <h2 class="sec-h">Your progress, at a glance.</h2>
+  <p class="sec-p">Stay on track with a live countdown, what to tackle next, and how far you’ve come.</p>
+  <div class="ov">
+    <div class="card ring">
+      <svg class="ringsvg" viewBox="0 0 128 128" aria-hidden="true">
+        <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9f0a"/><stop offset="1" stop-color="#ff375f"/></linearGradient></defs>
+        <circle class="bg" cx="64" cy="64" r="54"/><circle class="fg" id="ringFg" cx="64" cy="64" r="54"/>
+      </svg>
+      <div class="ringtxt"><div class="big" id="pct">0%</div><div class="sm" id="pctSub">0 of 0 tasks complete</div></div>
+    </div>
+    <div class="card count">
+      <div class="lab" id="cdLab">Countdown</div>
+      <div class="num" id="cdNum">—</div>
+      <div class="det" id="cdDet">Set your wedding date above to start the countdown.</div>
+    </div>
+    <div class="card next"><h3>Up next</h3><div id="nextList"></div></div>
+    <div class="card stats"><div class="stat"><b id="sDone">0</b><span>Completed</span></div><div class="stat"><b id="sLeft">0</b><span>Remaining</span></div><div class="stat"><b id="sWeek">0</b><span>Due in 14 days</span></div><div class="stat"><b id="sLate">0</b><span>To catch up</span></div></div>
+  </div>
+</section>
+
+<section id="checklist" class="reveal">
+  <h2 class="sec-h">The complete checklist.</h2>
+  <p class="sec-p">Every single step, in the order that works best. Tick them off, and watch the confetti fly.</p>
+  <div id="banner"></div>
+  <div class="toolbar">
+    <div class="tb1">
+      <div class="seg" id="seg" role="tablist" aria-label="Filter tasks">
+        <button class="on" data-f="all">All</button><button data-f="todo">To do</button><button data-f="late">Catch up</button><button data-f="done">Done</button>
+      </div>
+      <input class="search" id="q" type="search" placeholder="Search tasks…" aria-label="Search tasks">
+      <button class="btn ghost sm" id="jump">Jump to what’s next</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div id="list"></div>
+  <form class="add" id="addForm">
+    <strong style="flex:none">Add your own task</strong>
+    <input type="text" id="addTitle" placeholder="e.g. Book the harpist" maxlength="120" aria-label="New task title" required>
+    <input type="date" id="addDate" aria-label="Due date (optional)">
+    <button class="btn sm" type="submit">Add</button>
+  </form>
+</section>
+
+<section id="calendar" class="reveal">
+  <h2 class="sec-h">Your wedding calendar.</h2>
+  <p class="sec-p">Tap any day to see what’s scheduled. Tap a date to make it your wedding day, and every suggested date shifts to match.</p>
+  <div class="calwrap" id="calsec">
+    <div class="card cal">
+      <div class="cal-h">
+        <h3 id="calTitle">Month</h3>
+        <button class="nv" id="calPrev" aria-label="Previous month">‹</button>
+        <button class="btn ghost sm" id="calToday">Today</button>
+        <button class="btn ghost sm" id="calWed">Wedding</button>
+        <button class="nv" id="calNext" aria-label="Next month">›</button>
+      </div>
+      <div class="wd"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="days" id="calDays"></div>
+      <div class="legend"><span><i></i>Task due</span><span><i style="background:#ff9f0a"></i>Catch up</span><span><i style="background:#30d158"></i>All done</span><span><i style="background:linear-gradient(135deg,#ff375f,#bf5af2)"></i>Wedding day</span></div>
+    </div>
+    <div class="card panel" id="panel"></div>
+  </div>
+  <div class="tools">
+    <button class="btn" id="btnICS">Add remaining tasks to my calendar (.ics)</button>
+    <button class="btn ghost" id="btnPrint">Print or save as PDF</button>
+    <button class="btn ghost" id="btnReset">Start over</button>
+  </div>
+</section>
+
+</main>
+<footer>Made with love. Your progress is saved privately in this browser.</footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Data ---------- */
+var CATS={Foundations:"#0a84ff",Venue:"#bf5af2",Guests:"#30b0c7",Style:"#ff375f",Vendors:"#ff9f0a",Legal:"#5e5ce6",Ceremony:"#ff6482",Reception:"#c99a00",Travel:"#30d158",Self:"#40c8b0",Custom:"#8e8e93"};
+var PHASES=[
+ {k:"p1",min:330,t:"12+ months out",s:"Lay the foundations"},
+ {k:"p2",min:270,t:"9–11 months out",s:"Lock in the big vendors"},
+ {k:"p3",min:180,t:"6–8 months out",s:"Shape the details"},
+ {k:"p4",min:120,t:"4–5 months out",s:"Rings, invitations and menus"},
+ {k:"p5",min:75,t:"3 months out",s:"Finalise the people"},
+ {k:"p6",min:35,t:"1–2 months out",s:"Invitations and paperwork"},
+ {k:"p7",min:8,t:"The final month",s:"Tie up every loose end"},
+ {k:"p8",min:2,t:"The final week",s:"Confirm, delegate, breathe"},
+ {k:"p9",min:1,t:"The day before",s:"Rehearse and rest"},
+ {k:"p10",min:0,t:"Wedding day",s:"Your run sheet for the big moment"},
+ {k:"p11",min:-99999,t:"After the wedding",s:"Savour it, then wrap up"}
+];
+/* [daysBefore, category, title, note, snap ('w' weekday, 'e' weekend, ''), time 'HH:MM' | minutes from ceremony] */
+var RAW=[
+[450,"Foundations","Talk about the wedding you both imagine","Atmosphere, size, priorities and non-negotiables. Each write your top three, then compare.","","19:00"],
+[445,"Foundations","Share the news and celebrate your engagement","Tell close family first, then friends. Consider a small engagement party.","e","17:00"],
+[440,"Foundations","Set your overall budget","Agree the total and who is contributing. Add a 10% buffer for surprises.","","19:00"],
+[435,"Foundations","Open a dedicated wedding account or savings pot","Keeps deposits and payments in one place and easy to track.","w","10:00"],
+[430,"Foundations","Choose your season and a few possible dates","Have two or three options, in case your dream venue is booked.","","19:00"],
+[425,"Guests","Draft your guest list (A-list and B-list)","Guest count drives venue size, catering and cost, so settle it early.","e","10:00"],
+[420,"Foundations","Decide: planner, coordinator or DIY?","Even a day-of coordinator takes enormous pressure off.","","19:00"],
+[415,"Foundations","Choose your wedding party","Ask your bridesmaids, groomsmen, best friends or attendants. Share what the role involves.","e","11:00"],
+[405,"Venue","Research and shortlist ceremony and reception venues","Check capacity, location, accessibility, availability and total cost.","","19:00"],
+[395,"Venue","Visit your top venues","Ask about overtime, vendor rules, wet-weather plans, parking and noise curfews.","e","10:30"],
+[385,"Venue","Book your venue and secure your date","Read the contract carefully. Check cancellation terms and what the deposit covers.","w","10:00"],
+[380,"Vendors","Book your celebrant or officiant","Choose someone whose style matches yours. Great ones book out fast.","w","10:00"],
+[375,"Vendors","Book your photographer","Review full galleries, not just highlights, and confirm coverage hours.","w","10:00"],
+[370,"Vendors","Book your videographer (optional)","Ask about highlight films, full ceremony edits and audio.","w","10:00"],
+[365,"Vendors","Book your caterer (if not included by the venue)","Ask about dietary options, staffing ratios and service style.","w","10:00"],
+[360,"Vendors","Book entertainment: band, DJ or MC","Listen to live sets and share a do-not-play list.","w","10:00"],
+[355,"Legal","Consider wedding insurance","Covers vendor no-shows, cancellations, damage and lost deposits.","w","10:00"],
+[350,"Foundations","Create a shared planning folder or wedding website","One place for contracts, inspiration, guest info and your budget.","e","10:00"],
+[340,"Style","Build a mood board and choose your palette","Collect images for flowers, fashion, décor and food. Pick 3–4 colours.","","19:00"],
+[320,"Style","Start shopping for wedding attire","Book fittings and appointments. Made-to-order outfits can take 6–9 months.","e","10:30"],
+[310,"Style","Decide on wedding party attire","Share colours, fabrics and budget so everyone can plan.","","19:00"],
+[305,"Vendors","Book your florist","Share your palette and budget. Ask about seasonal blooms.","w","10:00"],
+[300,"Vendors","Book hair and makeup artists","Confirm travel, trial fees and whether they cover your wedding party.","w","10:00"],
+[290,"Vendors","Book transport","Wedding car, guest shuttles and parking arrangements if needed.","w","10:00"],
+[285,"Guests","Reserve accommodation for out-of-town guests","Many hotels offer room blocks with a discounted rate.","w","10:00"],
+[280,"Vendors","Book your cake or dessert baker","Share your theme, guest count and any dietary needs.","w","10:00"],
+[275,"Travel","Decide on honeymoon destination and budget","Check passport validity, season, and travel time from the wedding.","e","10:00"],
+[272,"Ceremony","Start shaping your ceremony","Traditional, modern or personal? Think vows, readings, music and rituals.","e","10:00"],
+[260,"Guests","Collect guest addresses and contact details","A shared spreadsheet or a quick online form works well.","","19:00"],
+[255,"Vendors","Book rentals","Marquee, furniture, lighting, linen, glassware and a dance floor if needed.","w","10:00"],
+[250,"Guests","Design and send save-the-dates","Send 6–8 months ahead, or earlier for destination or peak-season weddings.","e","10:00"],
+[240,"Reception","Sketch your reception flow","Entrances, speeches, dances, dinner service and send-off. Consider an MC.","e","10:00"],
+[235,"Travel","Book honeymoon flights and accommodation","Book refundable fares where possible.","w","10:00"],
+[225,"Self","Start your skincare, fitness or wellbeing routine","Small, steady habits beat last-minute pressure.","","07:00"],
+[215,"Ceremony","Meet with your celebrant or officiant","Discuss the ceremony outline, legal wording and your story.","w","10:00"],
+[210,"Legal","Check the legal requirements for marrying","Notice periods, ID, witnesses and paperwork vary by country and state. In Australia, a Notice of Intended Marriage must be lodged at least one month before.","w","10:00"],
+[200,"Style","Order your wedding dress or suit","Allow 4–6 months for production, plus time for alterations.","e","10:30"],
+[195,"Vendors","Book your wedding-night accommodation","Ask for a late checkout the next day.","w","10:00"],
+[190,"Guests","Create a gift registry or honeymoon fund","Offer a range of price points.","e","10:00"],
+[170,"Style","Order wedding party attire","Allow time for sizing and alterations.","w","10:00"],
+[165,"Guests","Choose your invitation design and wording","Include the date, venue, time, dress code, RSVP date and your website.","e","10:00"],
+[155,"Reception","Plan the menu, bar and dietary needs","Brief the caterer on allergies, kids’ meals and your drinks style.","w","10:00"],
+[150,"Style","Choose and order your wedding rings","Allow time for engraving and resizing.","e","10:30"],
+[145,"Ceremony","Choose ceremony music, readings and readers","Ask the people you’d love to involve.","e","10:00"],
+[140,"Style","Order stationery: menus, programs, signage, place cards","Keep your fonts and colours consistent with your invitations.","w","10:00"],
+[125,"Foundations","Review your budget against deposits paid","Adjust before the big bills arrive.","","19:00"],
+[122,"Style","Choose accessories: veil, shoes, jewellery, cufflinks","Pick shoes you can dance in.","e","10:30"],
+[110,"Guests","Finalise your guest list and addresses","Check spellings and plus-ones before printing.","w","10:00"],
+[100,"Guests","Proof and print invitations","Order a few extras for keepsakes and mistakes.","w","10:00"],
+[95,"Reception","Cake tasting and design confirmation","Confirm flavours, tiers, delivery and cake-cutting details.","e","11:00"],
+[90,"Reception","Menu tasting with your caterer","Bring your partner and anyone who has opinions.","e","12:00"],
+[85,"Foundations","Plan the rehearsal dinner and any extra events","Welcome drinks, morning-after brunch, family gatherings.","e","10:00"],
+[80,"Style","First dress and suit fitting","Bring the shoes and underlayers you’ll wear on the day.","e","10:30"],
+[78,"Ceremony","Write your first draft of your vows","Short, specific and honest beats long and flowery.","e","10:00"],
+[76,"Travel","Check passports, visas and vaccinations for the honeymoon","Many countries need six months’ passport validity.","w","10:00"],
+[70,"Guests","Send invitations","Set the RSVP date about four weeks before the wedding.","w","09:00"],
+[65,"Style","Hair and makeup trial","Bring reference photos and your veil or accessories.","e","10:00"],
+[60,"Vendors","Confirm every vendor and share your vision","Check contracts, balances and arrival times.","w","10:00"],
+[56,"Style","Second fitting","Check movement: sit, dance, hug and raise your arms.","e","10:30"],
+[52,"Foundations","Start planning your seating","Group your guests, then consider family dynamics.","e","10:00"],
+[49,"Ceremony","Finalise the ceremony order of service","Share it with your celebrant, musicians and readers.","e","10:00"],
+[45,"Legal","Lodge your marriage notice or apply for your licence","Check the local rules. In Australia, lodge it at least one month before the ceremony.","w","09:00"],
+[45,"Reception","Draft your wedding-day timeline","Work backwards from the ceremony and add buffers.","e","10:00"],
+[42,"Guests","Choose gifts for your parents and wedding party","Handwritten notes make them even more special.","e","10:00"],
+[38,"Reception","Prepare favours and welcome bags","Keep them small and useful.","e","10:00"],
+[30,"Guests","Follow up on missing RSVPs","A friendly text goes a long way.","w","10:00"],
+[28,"Guests","RSVP deadline: confirm your final guest count","Share the number with your venue and caterer.","w","10:00"],
+[26,"Reception","Create your seating plan","Put your table plan in writing and check dietary needs for each guest.","e","10:00"],
+[22,"Ceremony","Finalise your vows and read them aloud","Time them and practise with the words in front of you.","e","10:00"],
+[18,"Style","Final dress and suit fitting","Collect the date for pick-up and ask how to transport it.","w","10:30"],
+[17,"Self","Final haircut and colour appointment","Allow a week or two for it to settle in.","w","10:00"],
+[14,"Vendors","Send final numbers and dietary needs to your caterer","Include table plan and special requests.","w","10:00"],
+[14,"Vendors","Share your timeline and shot list with all vendors","One shared document keeps everyone on the same page.","w","10:00"],
+[14,"Foundations","Prepare final payments and tip envelopes","Label each envelope with the vendor name and amount.","w","10:00"],
+[12,"Style","Collect your wedding attire","Try it on once more at home.","w","10:00"],
+[10,"Reception","Finish place cards, programs and signage","Pack them in labelled boxes.","e","10:00"],
+[9,"Vendors","Confirm transport pick-up times","Share addresses and contact numbers with drivers.","w","10:00"],
+[8,"Self","Break in your shoes and book beauty appointments","Nails, brows or a facial, three to five days before.","e","10:00"],
+[7,"Vendors","Final confirmation calls with every vendor","Arrival times, parking, power, access and contact numbers.","w","10:00"],
+[6,"Foundations","Delegate wedding-day tasks","Gift table, card box, décor pack-down, cake transport, speeches order.","","19:00"],
+[6,"Reception","Drop décor, favours and signage at the venue","Label everything and leave a checklist with the venue.","w","10:00"],
+[5,"Travel","Pack for the honeymoon and arrange house or pet care","Keep travel documents in your carry-on.","","18:00"],
+[4,"Legal","Gather your ID and legal paperwork for the ceremony","Marriage documents, ID for witnesses and your celebrant’s requirements.","","10:00"],
+[3,"Self","Beauty treatments: mani-pedi, facial, brows","Go for something gentle and avoid anything new.","","11:00"],
+[3,"Foundations","Check the weather and your wet-weather plan","Umbrellas, a covered backup and a plan for photos.","","19:00"],
+[2,"Self","Write notes to your partner, parents and wedding party","A few honest lines will mean the world.","","19:00"],
+[1,"Foundations","Pack the day-of emergency kit","Safety pins, tissues, snacks, pain relief, stain remover, phone charger.","","10:00"],
+[1,"Foundations","Lay out your attire, rings, vows and documents","Give the rings to someone you trust.","","16:00"],
+[1,"Ceremony","Ceremony rehearsal at the venue","Walk through the processional, positions and cues with your celebrant.","","17:00"],
+[1,"Reception","Rehearsal dinner","Thank your families and wedding party. Keep it relaxed.","","19:00"],
+[1,"Self","Early night with plenty of water","Phones down and breathe.","","21:30"],
+[0,"Self","Eat a proper breakfast and drink water","Don’t skip it. It’s a long, wonderful day.","",-420],
+[0,"Style","Hair and makeup begins","Start with the person who needs the most time.","",-360],
+[0,"Vendors","Florist delivers flowers, photographer arrives","Getting-ready photos: invitation suite, rings, outfits, details.","",-270],
+[0,"Style","Get dressed","Give yourself a calm hour with the people you love.","",-180],
+[0,"Vendors","First look and couple portraits (optional)","A private moment before the busy part of the day.","",-120],
+[0,"Venue","Final venue check: décor, music, seating","Delegate this to your coordinator or a trusted friend.","",-90],
+[0,"Guests","Wedding party photos","Ask your photographer for a short list.","",-60],
+[0,"Guests","Guests arrive and ushers seat family","Ushers hand out programs and guide guests.","",-45],
+[0,"Ceremony","Take a breath. Final touch-ups.","Water, tissues, bouquet check, nerves out.","",-15],
+[0,"Ceremony","The ceremony: say “I do”!","This is it. Soak it in.","",0],
+[0,"Legal","Sign the marriage certificate with your witnesses","Your celebrant will guide you.","",30],
+[0,"Vendors","Family and group photos","Share your list with a friend who knows everyone.","",45],
+[0,"Reception","Cocktail hour and canapés","Mingle, eat and breathe.","",90],
+[0,"Reception","Grand entrance, first dance and speeches","Keep speeches short and sweet.","",150],
+[0,"Reception","Dinner is served","Make sure you eat.","",180],
+[0,"Reception","Cut the cake and open the dance floor","Let loose.","",240],
+[0,"Reception","Farewell and send-off","Sparklers, bubbles or confetti, and one last photo.","",420],
+[0,"Foundations","Assign someone to collect gifts, cards and décor","Tell them where it all should go.","",450],
+[-1,"Travel","Honeymoon: relax, you’ve earned it","Phones away. Nothing to plan.","","10:00"],
+[-3,"Foundations","Return rentals and attire","Check return deadlines and deposits.","w","10:00"],
+[-7,"Vendors","Review your vendors","A thoughtful review helps them and future couples.","","19:00"],
+[-10,"Style","Preserve your bouquet and dress","Specialist cleaners and preservation services book up.","w","10:00"],
+[-14,"Legal","Apply for your marriage certificate and update your name or documents","Passport, licence, bank, Medicare, super and utilities.","w","10:00"],
+[-21,"Foundations","Review your wedding photos and choose favourites","Plan albums, prints and thank-you images.","e","10:00"],
+[-30,"Guests","Send your thank-you notes","Personalise each one. Aim to send within three months.","e","10:00"],
+[-90,"Foundations","Celebrate your first three months","Dinner, photos, and sharing all the stories.","e","18:00"]
+];
+function phaseIdx(d){for(var i=0;i<PHASES.length;i++){if(d>=PHASES[i].min)return i}return PHASES.length-1}
+var ITEMS=RAW.map(function(r,i){return{id:"i"+i,d:r[0],cat:r[1],title:r[2],note:r[3],kind:r[4],t:r[5],ph:phaseIdx(r[0]),custom:false}});
+
+/* ---------- State ---------- */
+var KEY="evermore.wedding.v1";
+var S={n1:"",n2:"",date:"",time:"15:00",done:{},custom:[],collapsed:{},seq:0};
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);for(var k in p)S[k]=p[k]}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var UI={filter:"all",cat:"All",q:"",cal:null,sel:null};
+
+/* ---------- Date helpers ---------- */
+var pad=function(n){return String(n).padStart(2,"0")};
+var dkey=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+var dparse=function(k){var a=k.split("-").map(Number);return new Date(a[0],a[1]-1,a[2])};
+var addDays=function(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)};
+var today=function(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+var diffDays=function(a,b){return Math.round((a-b)/864e5)};
+var MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var WD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function fmtShort(d){return WD[d.getDay()].slice(0,3)+" "+d.getDate()+" "+MON[d.getMonth()].slice(0,3)+" "+d.getFullYear()}
+function fmtLong(d){return WD[d.getDay()]+" "+d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()}
+function hm(s){var a=s.split(":");return +a[0]*60+ +a[1]}
+function fmtMin(m){m=((m%1440)+1440)%1440;var h=Math.floor(m/60),mm=m%60,ap=h>=12?"pm":"am";h=h%12||12;return h+":"+pad(mm)+" "+ap}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function snap(dt,kind){
+  var w=dt.getDay();
+  if(kind==="w"){if(w===6)return addDays(dt,-1);if(w===0)return addDays(dt,-2)}
+  if(kind==="e"&&w!==6)return addDays(dt,-((w+1)%7));
+  return dt;
+}
+function wedDate(){return S.date?dparse(S.date):null}
+
+/* ---------- Resolve task schedule ---------- */
+function resolve(it){
+  if(it.custom){return{date:it.date?dparse(it.date):null,min:null}}
+  var w=wedDate(),min;
+  if(typeof it.t==="number"){min=hm(S.time||"15:00")+it.t}else{min=hm(it.t)}
+  if(!w)return{date:null,min:min};
+  var dt=addDays(w,-it.d);
+  if(it.kind==='w'?(it.d>=3||it.d<=-3):it.d>=8)dt=snap(dt,it.kind);
+  return{date:dt,min:min};
+}
+function relText(it){
+  var d=it.d;
+  if(d===0)return"On the wedding day";
+  if(d===1)return"The day before";
+  if(d<0){var a=-d;return a>=30?"About "+Math.round(a/30.4)+" month"+(Math.round(a/30.4)>1?"s":"")+" after":a+" days after"}
+  if(d>=60)return"About "+Math.round(d/30.4)+" months before";
+  if(d>=14)return"About "+Math.round(d/7)+" weeks before";
+  return d+" days before";
+}
+function allTasks(){
+  var arr=ITEMS.concat(S.custom.map(function(c){return{id:c.id,custom:true,cat:"Custom",title:c.title,note:"",date:c.date,ph:-1,d:0}}));
+  return arr.map(function(it){var r=resolve(it);return{it:it,date:r.date,min:r.min,done:!!S.done[it.id]}});
+}
+
+/* ---------- Confetti ---------- */
+var cv=$("#confetti"),cx=cv.getContext?cv.getContext("2d"):null,P=[],raf=0;
+var CONF=["#ff375f","#ff9f0a","#ffd60a","#30d158","#0a84ff","#bf5af2","#64d2ff","#ffffff","#ff6482"];
+function sizeCv(){var r=window.devicePixelRatio||1;cv.width=Math.round(innerWidth*r);cv.height=Math.round(innerHeight*r);if(cx&&cx.setTransform)cx.setTransform(r,0,0,r,0,0)}
+sizeCv();addEventListener("resize",sizeCv);
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function spawn(x,y,n,angle,spread,vmin,vmax){
+  if(reduce)n=Math.min(n,12);
+  for(var i=0;i<n;i++){
+    var a=angle+(Math.random()-.5)*spread,v=vmin+Math.random()*(vmax-vmin);
+    P.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.26+Math.random()*.12,w:6+Math.random()*7,h:4+Math.random()*6,r:Math.random()*6.28,vr:(Math.random()-.5)*.45,c:pick(CONF),circ:Math.random()<.28,life:0,max:120+Math.random()*70,sw:Math.random()*6.28});
+  }
+  loop();
+}
+function rain(n){
+  if(reduce)n=Math.min(n,8);
+  for(var i=0;i<n;i++){
+    P.push({x:Math.random()*innerWidth,y:-20-Math.random()*260,vx:(Math.random()-.5)*2.4,vy:1.5+Math.random()*3.5,g:.03,w:6+Math.random()*6,h:4+Math.random()*6,r:Math.random()*6.28,vr:(Math.random()-.5)*.3,c:pick(CONF),circ:Math.random()<.3,life:0,max:170+Math.random()*90,sw:Math.random()*6.28});
+  }
+  loop();
+}
+function celebrate(x,y,big){
+  var w=innerWidth,h=innerHeight;
+  spawn(x,y,big?120:70,-Math.PI/2,Math.PI*1.1,6,big?20:15);
+  spawn(0,h,big?70:36,-Math.PI/3.1,.9,13,big?27:21);
+  spawn(w,h,big?70:36,-Math.PI+Math.PI/3.1,.9,13,big?27:21);
+  rain(big?140:44);
+}
+function loop(){if(!raf)raf=requestAnimationFrame(step)}
+function step(){
+  raf=0;
+  if(cx){cx.clearRect(0,0,innerWidth,innerHeight)}
+  P=P.filter(function(p){return p.life<p.max&&p.y<innerHeight+40});
+  for(var i=0;i<P.length;i++){
+    var p=P[i];p.life++;p.vx*=.987;p.vy=p.vy*.99+p.g;p.x+=p.vx+Math.sin(p.life/9+p.sw)*.6;p.y+=p.vy;p.r+=p.vr;
+    if(!cx)continue;
+    var al=Math.min(1,(p.max-p.life)/35);
+    cx.save();cx.globalAlpha=Math.max(0,al);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;
+    if(p.circ){cx.beginPath();cx.arc(0,0,p.w/2.3,0,6.283);cx.fill()}
+    else{cx.scale(1,Math.abs(Math.cos(p.life/7+p.sw))*.8+.2);cx.fillRect(-p.w/2,-p.h/2,p.w,p.h)}
+    cx.restore();
+  }
+  if(P.length)loop();
+}
+
+/* ---------- Toast ---------- */
+var tt=0;
+function toast(msg){var t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("show")},2800)}
+
+/* ---------- Toggle ---------- */
+var CHEERS=["Lovely. One more done!","Nicely done!","That’s a big one ticked.","Look at you go!","One step closer to “I do”.","Wonderful progress!"];
+function phaseStats(){
+  var out={};
+  ITEMS.forEach(function(it){var o=out[it.ph]||(out[it.ph]={d:0,t:0});o.t++;if(S.done[it.id])o.d++});
+  var c=S.custom.length;if(c){out[-1]={d:S.custom.filter(function(x){return S.done[x.id]}).length,t:c}}
+  return out;
+}
+function toggle(id,on,srcEl){
+  var was=phaseStats();
+  if(on)S.done[id]=1;else delete S.done[id];
+  save();
+  $$('input[data-id="'+id+'"]').forEach(function(i){i.checked=on});
+  $$('[data-row="'+id+'"]').forEach(function(r){r.classList.toggle("done",on)});
+  if(on){
+    var rc=(srcEl||document.body).getBoundingClientRect?(srcEl||document.body).getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
+    var x=rc.left+rc.width/2,y=rc.top+rc.height/2;
+    var now=phaseStats(),total=ITEMS.length+S.custom.length,doneN=Object.keys(S.done).filter(function(k){return ITEMS.some(function(i){return i.id===k})||S.custom.some(function(c){return c.id===k})}).length;
+    var it=ITEMS.filter(function(i){return i.id===id})[0];
+    var ph=it?it.ph:-1,justDone=now[ph]&&now[ph].d===now[ph].t&&was[ph].d!==was[ph].t;
+    if(doneN===total&&total>0){celebrate(x,y,true);setTimeout(function(){celebrate(innerWidth/2,innerHeight/2,true)},650);toast("Every single task is done. Congratulations!")}
+    else if(justDone){celebrate(x,y,true);toast("Phase complete: "+(it?PHASES[it.ph].t:"Your own tasks")+"!")}
+    else{celebrate(x,y,false);toast(CHEERS[Math.floor(Math.random()*CHEERS.length)])}
+  }
+  updateMeta();
+  if(UI.filter==="todo"||UI.filter==="done"||UI.filter==="late"){setTimeout(function(){renderList()},700)}
+}
+
+/* ---------- Rendering: checklist ---------- */
+function visible(t){
+  var q=UI.q.trim().toLowerCase(),it=t.it;
+  if(UI.cat!=="All"&&it.cat!==UI.cat)return false;
+  if(q&&(it.title+" "+(it.note||"")+" "+it.cat).toLowerCase().indexOf(q)<0)return false;
+  var late=!t.done&&t.date&&t.date<today();
+  if(UI.filter==="todo"&&t.done)return false;
+  if(UI.filter==="done"&&!t.done)return false;
+  if(UI.filter==="late"&&!late)return false;
+  return true;
+}
+function rowHTML(t){
+  var it=t.it,late=!t.done&&t.date&&t.date<today(),c=CATS[it.cat]||CATS.Custom;
+  var when=t.date?'<span class="pill">'+fmtShort(t.date)+'</span>':(it.custom?'':'<span class="pill">'+relText(it)+'</span>');
+  var time=(!it.custom&&t.min!=null&&t.date)?'<span class="pill t">'+fmtMin(t.min)+(it.d>1?" suggested":"")+'</span>':"";
+  return '<li class="item'+(t.done?" done":"")+'" id="row-'+it.id+'" data-row="'+it.id+'">'+
+   '<label class="ck"><input type="checkbox" data-id="'+it.id+'"'+(t.done?" checked":"")+' aria-label="Mark done: '+esc(it.title)+'"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>'+
+   '<div class="body"><div class="title">'+esc(it.title)+'</div>'+(it.note?'<div class="note">'+esc(it.note)+'</div>':"")+
+   '<div class="meta"><span class="tag" style="--c:'+c+'">'+it.cat+'</span>'+when+time+(late?'<span class="pill late">Catch up</span>':"")+'</div></div>'+
+   (it.custom?'<button class="del" data-del="'+it.id+'" aria-label="Delete task">×</button>':"")+'</li>';
+}
+var CHEV='<svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l5 5 5-5"/></svg>';
+function renderList(){
+  var tasks=allTasks(),groups={},html="",any=false;
+  tasks.forEach(function(t){if(!visible(t))return;var g=t.it.ph;(groups[g]||(groups[g]=[])).push(t)});
+  var order=PHASES.map(function(p,i){return i}).concat([-1]);
+  order.forEach(function(g){
+    var arr=groups[g];if(!arr)return;any=true;
+    var meta=g===-1?{k:"cu",t:"Your own tasks",s:"Anything unique to your day"}:PHASES[g];
+    var all=tasks.filter(function(t){return t.it.ph===g});
+    var dates=all.map(function(t){return t.date}).filter(Boolean).sort(function(a,b){return a-b});
+    var rng=dates.length?(function(a,b){var f=function(d){return d.getDate()+" "+MON[d.getMonth()].slice(0,3)+(d.getFullYear()!==new Date().getFullYear()?" "+d.getFullYear():"")};return a-b===0?f(a):f(a)+" – "+f(b)})(dates[0],dates[dates.length-1]):"";
+    var dn=all.filter(function(t){return t.done}).length;
+    html+='<div class="phase'+(S.collapsed[meta.k]?" closed":"")+(dn===all.length?" complete":"")+'" data-phase="'+meta.k+'" data-g="'+g+'">'+
+      '<button class="ph-head" data-toggle="'+meta.k+'" aria-expanded="'+(!S.collapsed[meta.k])+'"><span class="ph-title">'+meta.t+'</span>'+
+      '<span class="ph-sub">'+meta.s+(rng?" · "+rng:"")+'</span><span class="ph-right"><span class="ph-count" data-count="'+g+'">'+dn+" / "+all.length+'</span><span class="ph-bar"><i data-bar="'+g+'" style="width:'+(all.length?dn/all.length*100:0)+'%"></i></span>'+CHEV+'</span></button>'+
+      '<ul class="items">'+arr.map(rowHTML).join("")+'</ul></div>';
+  });
+  $("#list").innerHTML=any?html:'<div class="empty">Nothing here. Try a different filter.</div>';
+}
+
+/* ---------- Rendering: chips ---------- */
+function renderChips(){
+  var names=["All"].concat(Object.keys(CATS).filter(function(c){return c!=="Custom"}));
+  $("#chips").innerHTML=names.map(function(n){return'<button class="chip'+(UI.cat===n?" on":"")+'" data-cat="'+n+'" style="--c:'+(CATS[n]||"#8e8e93")+'">'+(n==="All"?"":"<i></i>")+n+'</button>'}).join("");
+}
+
+/* ---------- Overview + meta ---------- */
+function updateMeta(){
+  var tasks=allTasks(),total=tasks.length,done=tasks.filter(function(t){return t.done}).length,pct=total?Math.round(done/total*100):0;
+  var td=today(),late=tasks.filter(function(t){return!t.done&&t.date&&t.date<td}).length;
+  var soon=tasks.filter(function(t){return!t.done&&t.date&&t.date>=td&&diffDays(t.date,td)<=14}).length;
+  $("#pct").textContent=pct+"%";$("#pctSub").textContent=done+" of "+total+" tasks complete";
+  $("#ringFg").style.strokeDashoffset=String(339.3*(1-pct/100));
+  $("#navPill").textContent=pct+"% done";
+  $("#sDone").textContent=done;$("#sLeft").textContent=total-done;$("#sWeek").textContent=S.date?soon:"–";$("#sLate").textContent=S.date?late:"–";
+  var ps=phaseStats();
+  $$("[data-count]").forEach(function(el){var g=el.getAttribute("data-count"),o=ps[g];if(!o)return;el.textContent=o.d+" / "+o.t;
+    var bar=document.querySelector('[data-bar="'+g+'"]');if(bar)bar.style.width=(o.t?o.d/o.t*100:0)+"%";
+    var ph=el.closest(".phase");if(ph)ph.classList.toggle("complete",o.d===o.t)});
+  /* countdown */
+  var w=wedDate();
+  if(!w){$("#cdLab").textContent="Countdown";$("#cdNum").textContent="—";$("#cdDet").textContent="Set your wedding date above to start the countdown."}
+  else{
+    var n=diffDays(w,td);
+    if(n>1){$("#cdLab").textContent="Until the wedding";$("#cdNum").textContent=n;$("#cdDet").textContent="days · "+Math.floor(n/7)+" weeks and "+(n%7)+" days · "+fmtLong(w)}
+    else if(n===1){$("#cdLab").textContent="Almost there";$("#cdNum").textContent="1";$("#cdDet").textContent="sleep to go. Tomorrow you get married!"}
+    else if(n===0){$("#cdLab").textContent="Today";$("#cdNum").textContent="♥";$("#cdDet").textContent="Today is your wedding day. Enjoy every minute."}
+    else{$("#cdLab").textContent="Happily married";$("#cdNum").textContent=-n;$("#cdDet").textContent=(-n===1?"day":"days")+" since "+fmtLong(w)}
+  }
+  /* next up */
+  var up=tasks.filter(function(t){return!t.done}).sort(function(a,b){
+    if(a.date&&b.date)return a.date-b.date||(a.min||0)-(b.min||0);
+    if(a.date)return-1;if(b.date)return 1;return b.it.d-a.it.d;}).slice(0,3);
+  $("#nextList").innerHTML=up.length?up.map(function(t){
+    return'<button class="nx" data-jump="'+t.it.id+'"><span class="d">'+(t.date?(t.date<td?"Catch up":fmtShort(t.date).replace(/ \d{4}$/,"")):relText(t.it).replace("About ",""))+'</span><span class="t">'+esc(t.it.title)+'</span></button>'}).join(""):'<div style="color:var(--muted);padding:8px 0">Everything is ticked off. Go celebrate!</div>';
+  renderBanner();
+  renderCal();
+}
+function renderBanner(){
+  var el=$("#banner"),w=wedDate();
+  if(!w){el.innerHTML='<div class="banner"><span>Set your wedding date to see a suggested date and time on every task.</span><button class="btn sm" data-focusdate>Choose my date</button></div>';return}
+  var n=diffDays(w,today());
+  if(n>=0&&n<330){
+    var late=allTasks().filter(function(t){return!t.done&&t.date&&t.date<today()}).length;
+    el.innerHTML='<div class="banner warn"><span><b>Your wedding is '+n+' day'+(n===1?"":"s")+' away.</b> Tasks that would normally be done by now are marked “Catch up”. Start with those.</span>'+(late?'<button class="btn sm ghost" data-filter="late">Show '+late+' to catch up</button>':"")+'</div>';
+  }else if(n<0){el.innerHTML='<div class="banner"><span>Your wedding date is in the past. Check the date above, or work through the “After the wedding” tasks.</span></div>'}
+  else el.innerHTML="";
+}
+
+/* ---------- Calendar ---------- */
+function monthStart(){return UI.cal||(UI.cal=(function(){var b=wedDate()||today();return new Date(b.getFullYear(),b.getMonth(),1)})())}
+function renderCal(){
+  var ms=monthStart(),y=ms.getFullYear(),m=ms.getMonth();
+  $("#calTitle").textContent=MON[m]+" "+y;
+  var first=new Date(y,m,1),lead=(first.getDay()+6)%7,start=addDays(first,-lead);
+  var map={};allTasks().forEach(function(t){if(t.date){(map[dkey(t.date)]||(map[dkey(t.date)]=[])).push(t)}});
+  var td=dkey(today()),wk=S.date,html="";
+  for(var i=0;i<42;i++){
+    var d=addDays(start,i),k=dkey(d),ts=map[k]||[],cls="day";
+    if(d.getMonth()!==m)cls+=" o";if(k===td)cls+=" today";if(k===wk)cls+=" wed";if(k===UI.sel)cls+=" sel";
+    var dots="";
+    if(ts.length){
+      var alld=ts.every(function(t){return t.done}),anyl=ts.some(function(t){return!t.done&&t.date<today()});
+      var n=Math.min(3,ts.length);for(var j=0;j<n;j++)dots+='<i class="'+(alld?"d":anyl?"l":"")+'"></i>';
+    }
+    html+='<button class="'+cls+'" data-day="'+k+'" aria-label="'+fmtLong(d)+(ts.length?", "+ts.length+" tasks":"")+(k===wk?", wedding day":"")+'"><span class="n">'+(k===wk?"♥":d.getDate())+'</span><span class="dots">'+dots+'</span></button>';
+  }
+  $("#calDays").innerHTML=html;
+  renderPanel(map);
+}
+function renderPanel(map){
+  var k=UI.sel||S.date||dkey(today()),d=dparse(k);
+  map=map||{};var ts=(map[k]||[]).slice().sort(function(a,b){return(a.min||0)-(b.min||0)});
+  var h='<h3>'+fmtLong(d)+'</h3>';
+  if(k===S.date)h+='<span class="bd">♥ Wedding day'+(S.time?" · "+fmtMin(hm(S.time)):"")+'</span>';
+  else h+='<div style="height:12px"></div>';
+  if(ts.length){h+=ts.map(function(t){var c=CATS[t.it.cat]||CATS.Custom;
+    return'<div class="pitem" data-row="'+t.it.id+'"><label class="ck"><input type="checkbox" data-id="'+t.it.id+'"'+(t.done?" checked":"")+' aria-label="Mark done: '+esc(t.it.title)+'"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label><div class="body"><div class="title" style="'+(t.done?"color:var(--muted);text-decoration:line-through":"")+'">'+esc(t.it.title)+'</div><div class="tm"><span style="color:'+c+';font-weight:600">'+t.it.cat+'</span>'+(t.min!=null&&!t.it.custom?" · "+fmtMin(t.min):"")+' · <a href="#row-'+t.it.id+'" data-jump="'+t.it.id+'" style="color:var(--blue);text-decoration:none">View in list</a></div></div></div>'}).join("")}
+  else h+='<div style="color:var(--muted);padding:14px 0;border-top:1px solid var(--line)">Nothing scheduled. Enjoy a breather ☕</div>';
+  if(k!==S.date)h+='<div style="margin-top:14px"><button class="btn sm" data-setwed="'+k+'">Make this my wedding day</button></div>';
+  $("#panel").innerHTML=h;
+}
+
+/* ---------- Full render ---------- */
+function renderAll(){renderChips();renderList();updateMeta();updateHero()}
+function updateHero(){
+  var a=S.n1.trim(),b=S.n2.trim(),h=$("#heroTitle");
+  if(a&&b)h.innerHTML=esc(a)+" &amp; "+esc(b)+".<br><span class=\"g\">Let’s plan your wedding.</span>";
+  else if(a||b)h.innerHTML=esc(a||b)+".<br><span class=\"g\">Let’s plan your wedding.</span>";
+  else h.innerHTML='Plan the wedding.<br><span class="g">Enjoy the journey.</span>';
+  $("#setupHint").textContent=S.date?"Your date is set. Every task now has a suggested date and time.":"Pick your date and every task gets a suggested date and time. You can change it any time.";
+}
+function setWedding(k){
+  S.date=k;save();$("#wdate").value=k;UI.cal=null;UI.sel=k;
+  var w=dparse(k);UI.cal=new Date(w.getFullYear(),w.getMonth(),1);
+  renderAll();
+  toast("Wedding set for "+fmtLong(w));
+  var rc=$("#wdate").getBoundingClientRect();spawn(rc.left+rc.width/2,rc.top+20,50,-Math.PI/2,Math.PI,6,14);
+}
+function jumpTo(id){
+  var t=ITEMS.filter(function(i){return i.id===id})[0],g=t?PHASES[t.ph].k:"cu";
+  UI.filter="all";UI.cat="All";UI.q="";$("#q").value="";$$("#seg button").forEach(function(b){b.classList.toggle("on",b.dataset.f==="all")});
+  S.collapsed[g]=false;renderChips();renderList();
+  var row=document.getElementById("row-"+id);
+  if(row){row.scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});row.classList.remove("flash");void row.offsetWidth;row.classList.add("flash")}
+}
+
+/* ---------- ICS export ---------- */
+function icsEsc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n")}
+function ymd(d){return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())}
+function buildICS(){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Evermore//Wedding Planner//EN","CALSCALE:GREGORIAN"],stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  allTasks().forEach(function(t){
+    if(!t.date||t.done)return;
+    var it=t.it,timed=!it.custom&&it.d<=1&&it.d>=0&&t.min!=null;
+    L.push("BEGIN:VEVENT","UID:"+it.id+"-"+ymd(t.date)+"@evermore.planner","DTSTAMP:"+stamp);
+    if(timed){var m=((t.min%1440)+1440)%1440,e=m+30;L.push("DTSTART:"+ymd(t.date)+"T"+pad(Math.floor(m/60))+pad(m%60)+"00","DTEND:"+ymd(t.date)+"T"+pad(Math.floor(Math.min(e,1439)/60))+pad(Math.min(e,1439)%60)+"00")}
+    else{L.push("DTSTART;VALUE=DATE:"+ymd(t.date),"DTEND;VALUE=DATE:"+ymd(addDays(t.date,1)))}
+    L.push("SUMMARY:"+icsEsc("♥ "+it.title),"DESCRIPTION:"+icsEsc((it.note||"")+(it.custom?"":" (Suggested time "+fmtMin(t.min)+")")),"CATEGORIES:"+icsEsc(it.cat),"END:VEVENT");
+  });
+  L.push("END:VCALENDAR");return L.join("\r\n");
+}
+function downloadICS(){
+  if(!S.date){toast("Set your wedding date first");$("#wdate").focus();return}
+  var blob=new Blob([buildICS()],{type:"text/calendar"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="wedding-plan.ics";document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast("Calendar file downloaded");
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("change",function(e){
+  var i=e.target.closest&&e.target.closest("input[data-id]");
+  if(i){toggle(i.dataset.id,i.checked,i.parentNode)}
+});
+document.addEventListener("click",function(e){
+  var t=e.target,b;
+  if((b=t.closest("[data-toggle]"))){var k=b.dataset.toggle;S.collapsed[k]=!S.collapsed[k];save();b.parentNode.classList.toggle("closed",!!S.collapsed[k]);b.setAttribute("aria-expanded",String(!S.collapsed[k]));return}
+  if((b=t.closest("[data-cat]"))){UI.cat=b.dataset.cat;renderChips();renderList();return}
+  if((b=t.closest("[data-del]"))){var id=b.dataset.del;S.custom=S.custom.filter(function(c){return c.id!==id});delete S.done[id];save();renderList();updateMeta();return}
+  if((b=t.closest("[data-jump]"))){e.preventDefault();jumpTo(b.dataset.jump);return}
+  if((b=t.closest("[data-day]"))){UI.sel=b.dataset.day;var d=dparse(UI.sel);if(d.getMonth()!==monthStart().getMonth())UI.cal=new Date(d.getFullYear(),d.getMonth(),1);renderCal();return}
+  if((b=t.closest("[data-setwed]"))){setWedding(b.dataset.setwed);return}
+  if((b=t.closest("[data-focusdate]"))){window.scrollTo({top:0,behavior:"smooth"});setTimeout(function(){$("#wdate").focus()},500);return}
+  if((b=t.closest("[data-filter]"))){UI.filter=b.dataset.filter;$$("#seg button").forEach(function(x){x.classList.toggle("on",x.dataset.f===UI.filter)});renderList();document.getElementById("list").scrollIntoView({behavior:"smooth"});return}
+});
+$("#seg").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;UI.filter=b.dataset.f;$$("#seg button").forEach(function(x){x.classList.toggle("on",x===b)});renderList()});
+$("#q").addEventListener("input",function(e){UI.q=e.target.value;renderList()});
+$("#jump").addEventListener("click",function(){
+  var up=allTasks().filter(function(t){return!t.done}).sort(function(a,b){if(a.date&&b.date)return a.date-b.date;if(a.date)return-1;if(b.date)return 1;return b.it.d-a.it.d});
+  var td=today(),nxt=up.filter(function(t){return!t.date||t.date>=td})[0]||up[0];
+  if(nxt)jumpTo(nxt.it.id);else toast("Everything is done. Wow!");
+});
+function bindInput(id,field,after){$(id).addEventListener("input",function(e){S[field]=e.target.value;save();after&&after()})}
+bindInput("#n1","n1",updateHero);bindInput("#n2","n2",updateHero);
+$("#wtime").addEventListener("input",function(e){S.time=e.target.value||"15:00";save();renderList();updateMeta()});
+function onDate(e){var v=e.target.value;if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return;if(v===S.date)return;setWedding(v)}
+$("#wdate").addEventListener("change",onDate);
+$("#addForm").addEventListener("submit",function(e){
+  e.preventDefault();var t=$("#addTitle").value.trim();if(!t)return;
+  S.seq=(S.seq||0)+1;S.custom.push({id:"c"+Date.now()+"_"+S.seq,title:t,date:$("#addDate").value||""});save();
+  $("#addTitle").value="";$("#addDate").value="";UI.filter="all";$$("#seg button").forEach(function(x){x.classList.toggle("on",x.dataset.f==="all")});
+  renderList();updateMeta();toast("Task added");
+});
+$("#calPrev").addEventListener("click",function(){var m=monthStart();UI.cal=new Date(m.getFullYear(),m.getMonth()-1,1);renderCal()});
+$("#calNext").addEventListener("click",function(){var m=monthStart();UI.cal=new Date(m.getFullYear(),m.getMonth()+1,1);renderCal()});
+$("#calToday").addEventListener("click",function(){var n=today();UI.cal=new Date(n.getFullYear(),n.getMonth(),1);UI.sel=dkey(n);renderCal()});
+$("#calWed").addEventListener("click",function(){var w=wedDate();if(!w){toast("Pick your wedding date first");return}UI.cal=new Date(w.getFullYear(),w.getMonth(),1);UI.sel=S.date;renderCal()});
+$("#btnICS").addEventListener("click",downloadICS);
+$("#btnPrint").addEventListener("click",function(){$$(".phase").forEach(function(p){p.classList.remove("closed")});window.print()});
+function doReset(){
+  if(!confirm("Clear your names, date, time, ticks and custom tasks and start over?"))return;
+  S={n1:"",n2:"",date:"",time:"15:00",done:{},custom:[],collapsed:{},seq:0};save();UI.cal=null;UI.sel=null;UI.filter="all";UI.cat="All";UI.q="";
+  $("#n1").value="";$("#n2").value="";$("#wdate").value="";$("#wtime").value="15:00";$("#q").value="";$("#addTitle").value="";$("#addDate").value="";
+  $$("#seg button").forEach(function(x){x.classList.toggle("on",x.dataset.f==="all")});
+  renderAll();toast("All cleared. Fresh start!");
+}
+$("#btnReset").addEventListener("click",doReset);
+$("#btnReset2").addEventListener("click",doReset);
+
+/* ---------- Init ---------- */
+$("#n1").value=S.n1||"";$("#n2").value=S.n2||"";$("#wdate").value=S.date||"";$("#wtime").value=S.time||"15:00";
+UI.sel=S.date||null;
+renderAll();
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}})},{threshold:.08});
+  $$(".reveal").forEach(function(el){io.observe(el)});
+}else{$$(".reveal").forEach(function(el){el.classList.add("in")})}
+window.Evermore={confettiCount:function(){return P.length},buildICS:buildICS,state:function(){return S},items:ITEMS.length};
+})();
+</script>
+</body>
+</html>
