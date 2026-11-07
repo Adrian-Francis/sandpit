@@ -824,10 +824,16 @@ $("#btnReset2").addEventListener("click",doReset);
 $("#n1").value=S.n1||"";$("#n2").value=S.n2||"";$("#wdate").value=S.date||"";$("#wtime").value=S.time||"15:00";
 UI.sel=S.date||null;
 renderAll();
+/* Fade-in on scroll. threshold 0 = reveal as soon as ANY part is visible (tall sections can never show 8%). */
+function revealAll(){$$(".reveal").forEach(function(el){el.classList.add("in")})}
 if("IntersectionObserver" in window){
-  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}})},{threshold:.08});
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}})},{threshold:0,rootMargin:"0px 0px -5% 0px"});
   $$(".reveal").forEach(function(el){io.observe(el)});
-}else{$$(".reveal").forEach(function(el){el.classList.add("in")})}
+  setTimeout(revealAll,2500); /* safety net: never leave content hidden */
+}else{revealAll()}
+/* Menu and button links: make sure the target is visible the moment you jump to it */
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;var t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.classList.add("in")});
+addEventListener("hashchange",function(){var t=document.getElementById(location.hash.slice(1));if(t)t.classList.add("in")});
 window.Evermore={confettiCount:function(){return P.length},buildICS:buildICS,state:function(){return S},items:ITEMS.length};
 })();
 </script>
