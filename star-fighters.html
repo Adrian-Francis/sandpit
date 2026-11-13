@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UTB Star Fighters</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#cfefff;
+    font-family:'Courier New',ui-monospace,Menlo,monospace;-webkit-user-select:none;user-select:none}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  .scan{position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+  .panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;display:none;
+    background:rgba(3,7,16,.9);border:2px solid #4fd1ff;border-radius:6px;padding:26px 30px;
+    width:min(500px,92vw);text-align:center;
+    box-shadow:0 0 26px rgba(79,209,255,.45),inset 0 0 26px rgba(79,209,255,.12)}
+  .panel.show{display:block}
+  h1{margin:0 0 2px;font-size:clamp(26px,5vw,38px);letter-spacing:.2em;color:#fff;
+    text-shadow:0 0 10px #4fd1ff,0 0 26px #ff3df0}
+  .sub{font-size:12px;letter-spacing:.3em;color:#7fa7c0;margin-bottom:20px;text-transform:uppercase}
+  label{display:block;text-align:left;font-size:11px;letter-spacing:.2em;color:#7fa7c0;margin:12px 0 4px;text-transform:uppercase}
+  input[type=text]{width:100%;background:#000;color:#fff;border:1.5px solid #2c5a73;border-radius:4px;padding:10px 12px;
+    font:inherit;font-size:16px;letter-spacing:.1em;-webkit-user-select:text;user-select:text}
+  input[type=text]:focus{outline:none;border-color:#4fd1ff;box-shadow:0 0 10px rgba(79,209,255,.5)}
+  button{font:inherit;font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:14px;padding:11px 18px;margin-top:12px;
+    background:transparent;color:#4fd1ff;border:2px solid #4fd1ff;border-radius:4px;cursor:pointer;transition:.15s;width:100%}
+  button:hover{background:#4fd1ff;color:#000;box-shadow:0 0 18px rgba(79,209,255,.7)}
+  button.alt{color:#ff3df0;border-color:#ff3df0}
+  button.alt:hover{background:#ff3df0;color:#000;box-shadow:0 0 18px rgba(255,61,240,.7)}
+  button.ghost{color:#7fa7c0;border-color:#2c5a73;font-size:12px}
+  button.ghost:hover{background:#2c5a73;color:#fff;box-shadow:none}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .row input{flex:2}.row button{flex:1;margin-top:0}
+  .or{margin:14px 0 0;font-size:11px;letter-spacing:.3em;color:#4a6a7d}
+  .msg{min-height:18px;margin-top:12px;font-size:13px;color:#ffd23f}
+  .code{font-size:clamp(40px,9vw,60px);font-weight:900;letter-spacing:.3em;color:#fff;margin:2px 0 6px;
+    text-shadow:0 0 12px #4fd1ff;padding-left:.3em}
+  .link{font-size:11px;color:#7fa7c0;word-break:break-all;background:#000;border:1px dashed #2c5a73;padding:8px;border-radius:4px;margin-top:6px}
+  .slots{margin:18px 0 6px;text-align:left}
+  .slot{display:flex;align-items:center;gap:12px;padding:9px 12px;margin-bottom:6px;border:1.5px solid #1d3a4b;border-radius:4px;background:#050b14}
+  .slot i{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 10px currentColor;background:currentColor}
+  .slot span{flex:1;font-size:15px;letter-spacing:.08em}
+  .slot small{color:#7fa7c0;font-size:11px;letter-spacing:.15em}
+  .slot.empty{opacity:.55}.slot.empty span{color:#6b8796}
+  .chk{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:#a9d3e6;cursor:pointer;text-align:left}
+  .chk input{width:18px;height:18px;accent-color:#4fd1ff}
+  .wait{margin-top:14px;font-size:13px;color:#7fa7c0;letter-spacing:.1em}
+  #hud{position:fixed;top:8px;left:50%;transform:translateX(-50%);display:none;gap:10px;z-index:5;pointer-events:none}
+  .tile{min-width:128px;padding:6px 12px;border:1.5px solid currentColor;border-radius:4px;background:rgba(0,0,0,.6);
+    text-align:center;box-shadow:0 0 12px -2px currentColor}
+  .tile .n{font-size:11px;letter-spacing:.14em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+  .tile .s{font-size:24px;font-weight:900;line-height:1.1;color:#fff}
+  .tile .s small{font-size:12px;color:#7fa7c0;font-weight:400}
+  .tile .d{font-size:10px;color:#7fa7c0;letter-spacing:.1em}
+  .tile.me{box-shadow:0 0 18px 1px currentColor,inset 0 0 12px -4px currentColor}
+  .tile.off{display:none}
+  #corner{position:fixed;left:10px;top:8px;z-index:5;display:none;font-size:11px;letter-spacing:.14em;color:#7fa7c0}
+  #corner button{width:auto;padding:4px 10px;margin:6px 0 0;font-size:10px}
+  #help{position:fixed;left:0;right:0;bottom:8px;text-align:center;z-index:5;font-size:11px;letter-spacing:.2em;color:#58798b;pointer-events:none;display:none;text-transform:uppercase}
+  #toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:20;padding:8px 18px;border:1px solid #ffd23f;color:#ffd23f;
+    background:rgba(0,0,0,.85);font-size:13px;letter-spacing:.12em;border-radius:4px;opacity:0;transition:.3s;pointer-events:none}
+  #toast.show{opacity:1}
+  #winner{font-size:clamp(26px,6vw,44px);font-weight:900;letter-spacing:.14em;margin:8px 0 4px;text-shadow:0 0 18px currentColor}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="scan"></div>
+
+<div id="hud"></div>
+<div id="corner"><span id="roomTag"></span><br><button class="ghost" id="exitBtn">Exit</button></div>
+<div id="help">&larr; &rarr; rotate &nbsp;&middot;&nbsp; &uarr; thrust &nbsp;&middot;&nbsp; &darr; brake &nbsp;&middot;&nbsp; space fire &nbsp;&middot;&nbsp; M mute</div>
+<div id="toast"></div>
+
+<!-- MENU -->
+<div id="menu" class="panel show">
+  <h1>STAR FIGHTERS</h1>
+  <div class="sub">UTB &middot; 3-player dogfight</div>
+  <label for="name">Your callsign</label>
+  <input id="name" type="text" maxlength="12" placeholder="PILOT" autocomplete="off" spellcheck="false">
+  <button id="hostBtn">Host a game</button>
+  <div class="or">&mdash; OR JOIN A FRIEND &mdash;</div>
+  <div class="row" style="margin-top:12px">
+    <input id="code" type="text" maxlength="60" placeholder="ROOM CODE" autocomplete="off" spellcheck="false">
+    <button id="joinBtn" class="alt">Join</button>
+  </div>
+  <button id="practiceBtn" class="ghost">Practice vs bots (offline)</button>
+  <div class="msg" id="menuMsg"></div>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby" class="panel">
+  <div class="sub" style="margin-bottom:0">Room code</div>
+  <div class="code" id="lobbyCode">----</div>
+  <div class="link" id="inviteLink"></div>
+  <button class="ghost" id="copyBtn" style="margin-top:8px">Copy invite link</button>
+  <div class="slots" id="slots"></div>
+  <label class="chk" id="botsRow"><input type="checkbox" id="botsChk" checked> Fill empty seats with bots</label>
+  <button id="startBtn">Start game</button>
+  <div class="wait" id="waitTxt"></div>
+  <button class="ghost" id="leaveBtn">Leave</button>
+</div>
+
+<!-- GAME OVER -->
+<div id="over" class="panel">
+  <div class="sub" style="margin:0">Game over</div>
+  <div id="winner">PILOT WINS</div>
+  <div class="slots" id="finalSlots"></div>
+  <button id="againBtn">Play again</button>
+  <div class="wait" id="againWait"></div>
+  <button class="ghost" id="leaveBtn2">Leave</button>
+</div>
+
+<script>
+/* PeerJS: primary CDN, with a second CDN as backup */
+(function(){
+  var s=document.createElement('script');
+  s.src='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';
+  s.onerror=function(){var b=document.createElement('script');b.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';document.head.appendChild(b);};
+  document.head.appendChild(s);
+})();
+</script>
+
+<script>
+/*SIM_START*/
+/* =====================================================================
+   GAME SIMULATION  (runs only on the HOST's computer)
+   World is 1200 x 700 and wraps around at every edge, like Asteroids.
+   ===================================================================== */
+const W = 1200, H = 700;
+const WIN_SCORE = 10;          // first to this many kills wins
+const STEP = 1 / 60;
+const ROCK_R = [14, 26, 44];   // radius by size (0 small, 1 medium, 2 large)
+const SHIP_R = 14;
+const TURN = 3.8, THRUST = 290, MAXV = 360, BULLET_V = 640, BULLET_LIFE = 1.1, FIRE_CD = 0.2, MAX_BULLETS = 6;
+
+const Sim = (function () {
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const wrap = o => { if (o.x < 0) o.x += W; else if (o.x >= W) o.x -= W; if (o.y < 0) o.y += H; else if (o.y >= H) o.y -= H; };
+  function d2(ax, ay, bx, by) { let dx = Math.abs(ax - bx); if (dx > W / 2) dx = W - dx; let dy = Math.abs(ay - by); if (dy > H / 2) dy = H - dy; return dx * dx + dy * dy; }
+  function vec(ax, ay, bx, by) { let dx = bx - ax; if (dx > W / 2) dx -= W; else if (dx < -W / 2) dx += W; let dy = by - ay; if (dy > H / 2) dy -= H; else if (dy < -H / 2) dy += H; return [dx, dy]; }
+  function angDiff(a, b) { let d = a - b; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; }
+
+  function newShip(slot) {
+    return { slot, used: false, bot: false, x: 0, y: 0, vx: 0, vy: 0, a: 0, alive: false, respawn: 0, inv: 0, cd: 0,
+      score: 0, deaths: 0, thr: 0, inp: { l: 0, r: 0, u: 0, d: 0, f: 0 }, aimErr: 0, aimT: 0 };
+  }
+  function create() {
+    const sim = { phase: 'lobby', tm: 0, nid: 1, ships: [newShip(0), newShip(1), newShip(2)], bullets: [], rocks: [], ev: [], winner: -1, spawnT: 0 };
+    for (let i = 0; i < 6; i++) spawnEdgeRock(sim, true);
+    return sim;
+  }
+  function spawnRock(sim, size, x, y, vx, vy) {
+    sim.rocks.push({ id: sim.nid++, x, y, vx, vy, size, rot: rnd(0, 6.28), spin: rnd(-1, 1) });
+  }
+  function spawnEdgeRock(sim, anywhere) {
+    const size = Math.random() < 0.55 ? 2 : 1;
+    let x, y;
+    if (anywhere) { x = rnd(0, W); y = rnd(0, H); }
+    else if (Math.random() < 0.5) { x = Math.random() < 0.5 ? 0 : W - 1; y = rnd(0, H); }
+    else { y = Math.random() < 0.5 ? 0 : H - 1; x = rnd(0, W); }
+    for (const s of sim.ships) if (s.used && s.alive && d2(x, y, s.x, s.y) < 140 * 140) return;
+    const ang = rnd(0, 6.28), sp = rnd(25, 80);
+    spawnRock(sim, size, x, y, Math.cos(ang) * sp, Math.sin(ang) * sp);
+  }
+  const START_POS = [[W * 0.15, H * 0.5, 0], [W * 0.85, H * 0.3, Math.PI], [W * 0.5, H * 0.88, -Math.PI / 2]];
+
+  /** cfg: array of 3 {used, bot} */
+  function start(sim, cfg) {
+    sim.phase = 'play'; sim.winner = -1; sim.tm = 0; sim.bullets = []; sim.rocks = []; sim.ev = [];
+    for (let i = 0; i < 6; i++) spawnEdgeRock(sim, true);
+    sim.ships.forEach((s, i) => {
+      s.used = !!cfg[i].used; s.bot = !!cfg[i].bot; s.score = 0; s.deaths = 0; s.respawn = 0; s.cd = 0; s.thr = 0;
+      s.vx = s.vy = 0;
+      [s.x, s.y, s.a] = START_POS[i];
+      s.alive = s.used; s.inv = 3;
+    });
+    // clear rocks from start positions
+    sim.rocks = sim.rocks.filter(r => !sim.ships.some(s => s.used && d2(r.x, r.y, s.x, s.y) < 150 * 150));
+    while (sim.rocks.length < 5) spawnEdgeRock(sim, true);
+  }
+
+  function breakRock(sim, j) {
+    const r = sim.rocks[j];
+    sim.ev.push(['k', Math.round(r.x), Math.round(r.y), r.size]);
+    sim.rocks.splice(j, 1);
+    if (r.size > 0) {
+      const base = Math.atan2(r.vy, r.vx), sp = Math.hypot(r.vx, r.vy) * 1.25 + 25;
+      for (const off of [-0.7, 0.7]) {
+        const a = base + off + rnd(-0.25, 0.25);
+        spawnRock(sim, r.size - 1, r.x, r.y, Math.cos(a) * sp, Math.sin(a) * sp);
+      }
+    }
+  }
+
+  function kill(sim, s, killer) {
+    s.alive = false; s.respawn = 2.5; s.deaths++; s.thr = 0; s.vx = s.vy = 0;
+    sim.ev.push(['x', Math.round(s.x), Math.round(s.y), s.slot]);
+    if (killer >= 0 && killer !== s.slot) {
+      const k = sim.ships[killer]; k.score++;
+      if (k.score >= WIN_SCORE && sim.phase === 'play') { sim.phase = 'over'; sim.winner = killer; }
+    }
+  }
+
+  function respawn(sim, s) {
+    let best = null, bd = -1;
+    for (let i = 0; i < 24; i++) {
+      const x = rnd(60, W - 60), y = rnd(60, H - 60);
+      let m = 1e12;
+      for (const r of sim.rocks) m = Math.min(m, d2(x, y, r.x, r.y) - (ROCK_R[r.size] * ROCK_R[r.size]));
+      for (const o of sim.ships) if (o !== s && o.used && o.alive) m = Math.min(m, d2(x, y, o.x, o.y));
+      if (m > bd) { bd = m; best = [x, y]; }
+    }
+    s.x = best[0]; s.y = best[1]; s.vx = s.vy = 0; s.a = rnd(0, 6.28); s.alive = true; s.inv = 2; s.cd = 0.3;
+  }
+
+  /* simple bot pilot */
+  function ai(sim, s, dt) {
+    const inp = { l: 0, r: 0, u: 0, d: 0, f: 0 };
+    s.aimT -= dt; if (s.aimT <= 0) { s.aimT = rnd(0.5, 1.4); s.aimErr = rnd(-0.18, 0.18); }
+    let tgt = null, td = 1e12;
+    for (const o of sim.ships) if (o !== s && o.used && o.alive) { const d = d2(s.x, s.y, o.x, o.y); if (d < td) { td = d; tgt = o; } }
+    // dodge rocks first
+    for (const r of sim.rocks) {
+      const lim = ROCK_R[r.size] + 85;
+      if (d2(s.x, s.y, r.x, r.y) < lim * lim) {
+        const [dx, dy] = vec(s.x, s.y, r.x, r.y);
+        const away = Math.atan2(-dy, -dx), diff = angDiff(away, s.a);
+        if (diff > 0.1) inp.r = 1; else if (diff < -0.1) inp.l = 1;
+        if (Math.abs(diff) < 0.9) inp.u = 1;
+        return inp;
+      }
+    }
+    if (!tgt) { inp.d = 1; return inp; }
+    const [dx, dy] = vec(s.x, s.y, tgt.x, tgt.y);
+    const lead = 0.3, want = Math.atan2(dy + tgt.vy * lead, dx + tgt.vx * lead);
+    const diff = angDiff(want, s.a) + s.aimErr, dist = Math.hypot(dx, dy);
+    if (diff > 0.07) inp.r = 1; else if (diff < -0.07) inp.l = 1;
+    if (Math.abs(diff) < 0.2 && dist < 620 && Math.random() < 0.55) inp.f = 1;
+    if (dist > 280 && Math.abs(diff) < 0.9) inp.u = 1;
+    if (dist < 160) inp.d = 1;
+    return inp;
+  }
+
+  function updateShip(sim, s, dt) {
+    if (!s.used) return;
+    if (s.bot) s.inp = ai(sim, s, dt);
+    if (!s.alive) { s.respawn -= dt; if (s.respawn <= 0) respawn(sim, s); return; }
+    const i = s.inp;
+    if (i.l) s.a -= TURN * dt;
+    if (i.r) s.a += TURN * dt;
+    s.thr = i.u ? 1 : 0;
+    if (i.u) { s.vx += Math.cos(s.a) * THRUST * dt; s.vy += Math.sin(s.a) * THRUST * dt; }
+    const damp = Math.pow(i.d ? 0.03 : 0.5, dt);
+    s.vx *= damp; s.vy *= damp;
+    const sp = Math.hypot(s.vx, s.vy); if (sp > MAXV) { s.vx *= MAXV / sp; s.vy *= MAXV / sp; }
+    s.x += s.vx * dt; s.y += s.vy * dt; wrap(s);
+    if (s.a > 6.2832) s.a -= 6.2832; else if (s.a < 0) s.a += 6.2832;
+    s.inv -= dt; s.cd -= dt;
+    if (i.f && s.cd <= 0) {
+      let n = 0; for (const b of sim.bullets) if (b.owner === s.slot) n++;
+      if (n < MAX_BULLETS) {
+        s.cd = FIRE_CD;
+        const cx = Math.cos(s.a), cy = Math.sin(s.a);
+        sim.bullets.push({ id: sim.nid++, x: s.x + cx * 16, y: s.y + cy * 16, vx: s.vx + cx * BULLET_V, vy: s.vy + cy * BULLET_V, life: BULLET_LIFE, owner: s.slot });
+        sim.ev.push(['f', Math.round(s.x), Math.round(s.y), s.slot]);
+      }
+    }
+  }
+
+  function step(sim, dt) {
+    sim.tm += dt;
+    const play = sim.phase === 'play';
+    if (play) for (const s of sim.ships) updateShip(sim, s, dt);
+
+    for (let i = sim.bullets.length - 1; i >= 0; i--) {
+      const b = sim.bullets[i];
+      b.x += b.vx * dt; b.y += b.vy * dt; wrap(b); b.life -= dt;
+      if (b.life <= 0) { sim.bullets.splice(i, 1); continue; }
+      let hit = false;
+      for (let j = sim.rocks.length - 1; j >= 0; j--) {
+        const r = sim.rocks[j], rr = ROCK_R[r.size] + 3;
+        if (d2(b.x, b.y, r.x, r.y) < rr * rr) { breakRock(sim, j); hit = true; break; }
+      }
+      if (!hit && play) {
+        for (const s of sim.ships) {
+          if (s.used && s.alive && s.inv <= 0 && s.slot !== b.owner && d2(b.x, b.y, s.x, s.y) < (SHIP_R + 3) * (SHIP_R + 3)) { kill(sim, s, b.owner); hit = true; break; }
+        }
+      }
+      if (hit) sim.bullets.splice(i, 1);
+    }
+
+    for (const r of sim.rocks) {
+      r.x += r.vx * dt; r.y += r.vy * dt; r.rot += r.spin * dt; wrap(r);
+      if (play) for (const s of sim.ships) {
+        if (s.used && s.alive && s.inv <= 0) {
+          const lim = SHIP_R * 0.8 + ROCK_R[r.size] * 0.85;
+          if (d2(s.x, s.y, r.x, r.y) < lim * lim) kill(sim, s, -1);
+        }
+      }
+    }
+    sim.spawnT -= dt;
+    if (sim.rocks.length < 5 && sim.spawnT <= 0) { sim.spawnT = 1.8; spawnEdgeRock(sim, false); }
+  }
+
+  const r1 = v => Math.round(v * 10) / 10;
+  function snapshot(sim) {
+    return {
+      p: sim.phase, w: sim.winner, tm: r1(sim.tm),
+      s: sim.ships.map(s => [s.used ? 1 : 0, r1(s.x), r1(s.y), Math.round(s.a * 100) / 100, s.alive ? 1 : 0, s.inv > 0 ? 1 : 0, s.thr, s.score, s.deaths, r1(Math.max(0, s.respawn)), s.bot ? 1 : 0]),
+      b: sim.bullets.map(b => [b.id, r1(b.x), r1(b.y), b.owner]),
+      r: sim.rocks.map(r => [r.id, r1(r.x), r1(r.y), r.size, Math.round(r.rot * 100) / 100]),
+      e: []
+    };
+  }
+  return { create, start, step, snapshot };
+})();
+/*SIM_END*/
+
+/* =====================================================================
+   CLIENT: networking, rendering, input
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const COLOURS = ['#ff5a5f', '#4fd1ff', '#8dff6a'];
+const PREFIX = 'utb-starfighters-';
+const canvas = $('#c'), ctx = canvas.getContext('2d');
+
+let role = null;                 // 'host' | 'client' | null
+let sim = null, hostSnap = null; // host only
+let peer = null, hostConn = null;
+let slotInfo = [null, null, null];      // host only: {name, conn}
+let mySlot = 0, roomCode = '';
+let dn = ['', '', ''], hum = [false, false, false], botsOn = true;   // display names / human flags (all clients)
+let snapPrev = null, snapCur = null, curAt = 0, interval = 33;      // client interpolation
+let curScreen = 'menu';
+let practice = false, roomFull = false;
+
+const store = {
+  get(k, d) { try { return localStorage.getItem('utbsf.' + k) || d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('utbsf.' + k, v); } catch (e) {} }
+};
+function toast(msg, ms = 2200) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), ms); }
+function menuMsg(m) { $('#menuMsg').textContent = m || ''; }
+const cleanName = n => (n || '').replace(/[^\w \-.!]/g, '').trim().slice(0, 12);
+
+/* ---------------- Input ---------------- */
+const keys = { l: 0, r: 0, u: 0, d: 0, f: 0 };
+const KEYMAP = { ArrowLeft: 'l', ArrowRight: 'r', ArrowUp: 'u', ArrowDown: 'd', ' ': 'f', Space: 'f' };
+const bits = () => keys.l | keys.r << 1 | keys.u << 2 | keys.d << 3 | keys.f << 4;
+function setBits(s, b) { s.inp = { l: b & 1, r: (b >> 1) & 1, u: (b >> 2) & 1, d: (b >> 3) & 1, f: (b >> 4) & 1 }; }
+function sendInput() { if (role === 'client' && hostConn && hostConn.open) hostConn.send({ t: 'in', k: bits() }); }
+
+addEventListener('keydown', e => {
+  if (/INPUT|TEXTAREA/.test(document.activeElement && document.activeElement.tagName)) return;
+  const k = KEYMAP[e.key] || KEYMAP[e.code];
+  if (k) { e.preventDefault(); if (!keys[k]) { keys[k] = 1; sendInput(); } audio(); }
+  else if (e.key === 'm' || e.key === 'M') { muted = !muted; toast(muted ? 'Sound off' : 'Sound on', 900); }
+});
+addEventListener('keyup', e => {
+  const k = KEYMAP[e.key] || KEYMAP[e.code];
+  if (k) { e.preventDefault(); if (keys[k]) { keys[k] = 0; sendInput(); } }
+});
+addEventListener('blur', () => { for (const k in keys) keys[k] = 0; sendInput(); });
+setInterval(sendInput, 120);   // heartbeat so a lost packet never leaves a key stuck
+
+/* ---------------- Audio ---------------- */
+let actx = null, muted = false;
+function audio() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (actx && actx.state === 'suspended') actx.resume();
+}
+function laser() {
+  if (muted || !actx) return;
+  const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+  o.type = 'square'; o.frequency.setValueAtTime(950, t); o.frequency.exponentialRampToValueAtTime(160, t + 0.14);
+  g.gain.setValueAtTime(0.04, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+  o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.16);
+}
+function boom(big) {
+  if (muted || !actx) return;
+  const t = actx.currentTime, len = Math.floor(actx.sampleRate * (big ? 0.6 : 0.3));
+  const buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+  const n = actx.createBufferSource(); n.buffer = buf;
+  const f = actx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = big ? 700 : 1200;
+  const g = actx.createGain(); g.gain.value = big ? 0.5 : 0.22;
+  n.connect(f); f.connect(g); g.connect(actx.destination); n.start(t);
+}
+
+/* ---------------- Particles, stars, comets ---------------- */
+let parts = [], comets = [];
+function explode(x, y, col, n, spd = 240) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * 6.283, s = 40 + Math.random() * spd;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.5 + Math.random() * 0.7, max: 1.2, col, len: 2 + Math.random() * 6 });
+  }
+}
+function handleEvent(e) {
+  const [k, x, y, a] = e;
+  if (k === 'f') laser();
+  else if (k === 'x') { explode(x, y, COLOURS[a], 40); explode(x, y, '#fff', 12, 120); boom(true); }
+  else if (k === 'k') { explode(x, y, '#cfd8dc', 8 + a * 6, 150); boom(false); }
+}
+const stars = [];
+for (let l = 0; l < 3; l++) for (let i = 0; i < [110, 70, 40][l]; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, l, tw: Math.random() * 6.28 });
+function spawnComet() {
+  const fromLeft = Math.random() < 0.5, sp = 260 + Math.random() * 260;
+  const ang = (fromLeft ? 0 : Math.PI) + (Math.random() - 0.5) * 0.9;
+  comets.push({ x: fromLeft ? -60 : W + 60, y: Math.random() * H, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 8 });
+}
+
+/* ---------------- Networking: HOST ---------------- */
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const makeCode = () => Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+const myName = () => cleanName($('#name').value) || 'PILOT';
+
+function initHostState(name) {
+  role = 'host'; mySlot = 0; sim = Sim.create(); slotInfo = [{ name, conn: null }, null, null];
+  hostSnap = Sim.snapshot(sim); botsOn = $('#botsChk').checked;
+  broadcastLobby();
+}
+function hostGame() {
+  audio(); menuMsg('');
+  if (typeof Peer === 'undefined') { menuMsg('Could not load the networking library. Check your internet and refresh.'); return; }
+  store.set('name', myName());
+  menuMsg('Creating room...');
+  openRoom(0);
+}
+function openRoom(attempt) {
+  const code = makeCode();
+  const p = new Peer(PREFIX + code);
+  p.on('open', () => {
+    peer = p; roomCode = code; initHostState(myName());
+    p.on('connection', onGuest);
+    p.on('error', err => { if (role === 'host') toast('Network issue: ' + err.type); });
+    p.on('disconnected', () => { try { p.reconnect(); } catch (e) {} });
+    menuMsg('');
+  });
+  p.on('error', err => {
+    if (role) return;
+    if (err.type === 'unavailable-id' && attempt < 6) { p.destroy(); openRoom(attempt + 1); }
+    else menuMsg('Could not create a room (' + err.type + '). Try again, or check whether your network blocks WebRTC.');
+  });
+}
+function onGuest(conn) {
+  conn.on('open', () => {
+    const slot = [1, 2].find(i => !slotInfo[i]);
+    if (slot === undefined) { conn.send({ t: 'full' }); setTimeout(() => conn.close(), 400); return; }
+    slotInfo[slot] = { name: 'Player ' + (slot + 1), conn }; conn._slot = slot;
+    conn.send({ t: 'welcome', slot });
+    broadcastLobby();
+  });
+  conn.on('data', m => {
+    if (conn._slot == null || !m) return;
+    if (m.t === 'hello') { slotInfo[conn._slot].name = cleanName(m.name) || ('Player ' + (conn._slot + 1)); broadcastLobby(); }
+    else if (m.t === 'in') setBits(sim.ships[conn._slot], m.k | 0);
+  });
+  conn.on('close', () => dropGuest(conn));
+  conn.on('error', () => dropGuest(conn));
+}
+function dropGuest(conn) {
+  const s = conn._slot; if (s == null) return;
+  conn._slot = null; slotInfo[s] = null;
+  const ship = sim.ships[s]; ship.inp = { l: 0, r: 0, u: 0, d: 0, f: 0 };
+  if (sim.phase !== 'lobby') { if (botsOn) ship.bot = true; else { ship.used = false; ship.alive = false; } }
+  broadcastLobby();
+}
+function broadcastLobby() {
+  hum = [0, 1, 2].map(i => !!slotInfo[i]);
+  dn = [0, 1, 2].map(i => slotInfo[i] ? slotInfo[i].name : (botsOn ? 'BOT ' + (i + 1) : ''));
+  const m = { t: 'lobby', dn, hum, bots: botsOn };
+  for (let i = 1; i < 3; i++) if (slotInfo[i] && slotInfo[i].conn.open) slotInfo[i].conn.send(m);
+  renderLobby();
+}
+function buildCfg() { return [0, 1, 2].map(i => ({ used: hum[i] || botsOn, bot: !hum[i] && botsOn })); }
+function hostStart() {
+  const cfg = buildCfg();
+  if (cfg.filter(c => c.used).length < 2) { toast('Need at least 2 pilots - tick "Fill empty seats with bots"'); return; }
+  Sim.start(sim, cfg); broadcastLobby();
+  if (document.activeElement) document.activeElement.blur();
+}
+function startPractice() {
+  audio(); practice = true; store.set('name', myName());
+  role = 'host'; mySlot = 0; sim = Sim.create(); slotInfo = [{ name: myName(), conn: null }, null, null];
+  botsOn = true; broadcastLobby(); hostStart();
+}
+
+/* ---------------- Networking: CLIENT ---------------- */
+function joinGame() {
+  audio(); menuMsg('');
+  let code = $('#code').value.trim();
+  const m = code.match(/[?&]room=([A-Za-z0-9]+)/); if (m) code = m[1];
+  code = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (code.length !== 4) { menuMsg('Enter the 4-character room code (or paste the invite link).'); return; }
+  if (typeof Peer === 'undefined') { menuMsg('Could not load the networking library. Check your internet and refresh.'); return; }
+  store.set('name', myName());
+  menuMsg('Connecting...');
+  const p = new Peer();
+  let done = false;
+  const fail = txt => { if (done) return; done = true; menuMsg(txt); try { p.destroy(); } catch (e) {} };
+  const timer = setTimeout(() => fail('Timed out. Is the host still in the game? Some work/school networks block this kind of connection.'), 14000);
+  p.on('error', err => {
+    clearTimeout(timer);
+    if (role) { toast('Network issue: ' + err.type); return; }
+    fail(err.type === 'peer-unavailable' ? 'Room "' + code + '" not found. Check the code with the host.' : 'Connection error: ' + err.type);
+  });
+  p.on('open', () => {
+    const c = p.connect(PREFIX + code, { reliable: true });
+    c.on('open', () => {
+      clearTimeout(timer); done = true; peer = p; hostConn = c; role = 'client'; roomCode = code; menuMsg('');
+    });
+    c.on('data', onHostData);
+    c.on('close', () => { if (role === 'client' && !roomFull) { toast('Host left the game', 4000); setTimeout(() => location.href = location.pathname, 1800); } });
+  });
+}
+function onHostData(m) {
+  if (!m) return;
+  if (m.t === 'welcome') { mySlot = m.slot; hostConn.send({ t: 'hello', name: myName() }); sendInput(); }
+  else if (m.t === 'full') { roomFull = true; toast('That room is full', 4000); setTimeout(() => location.href = location.pathname, 1500); }
+  else if (m.t === 'lobby') { dn = m.dn; hum = m.hum; botsOn = m.bots; renderLobby(); }
+  else if (m.t === 's') {
+    const now = performance.now();
+    snapPrev = snapCur || m; snapCur = m;
+    interval = Math.min(100, Math.max(16, now - curAt)); curAt = now;
+    (m.e || []).forEach(handleEvent);
+  }
+}
+
+/* host -> clients snapshots at 30 Hz */
+let netEv = [];
+function netSend() {
+  const snap = Sim.snapshot(sim); snap.t = 's'; snap.e = netEv; netEv = [];
+  for (let i = 1; i < 3; i++) if (slotInfo[i] && slotInfo[i].conn.open) slotInfo[i].conn.send(snap);
+}
+
+/* ---------------- UI ---------------- */
+function showPanel(id) {
+  for (const p of ['menu', 'lobby', 'over']) $('#' + p).classList.toggle('show', p === id);
+  const playing = id === null || id === 'over';
+  $('#hud').style.display = playing ? 'flex' : 'none';
+  $('#help').style.display = id === null ? 'block' : 'none';
+  $('#corner').style.display = role ? 'block' : 'none';
+  $('#roomTag').textContent = practice ? 'PRACTICE' : (roomCode ? 'ROOM ' + roomCode : '');
+}
+function inviteUrl() { return location.origin + location.pathname + '?room=' + roomCode; }
+function renderLobby() {
+  $('#lobbyCode').textContent = roomCode || '----';
+  $('#inviteLink').textContent = inviteUrl();
+  const box = $('#slots'); box.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const d = document.createElement('div'); d.className = 'slot' + (!hum[i] && !botsOn ? ' empty' : '');
+    d.innerHTML = '<i></i><span></span><small></small>'; d.querySelector('i').style.color = COLOURS[i];
+    d.querySelector('span').textContent = hum[i] ? dn[i] : (botsOn ? 'BOT (auto-pilot)' : 'Waiting for pilot...');
+    d.querySelector('small').textContent = i === mySlot ? 'YOU' : (i === 0 ? 'HOST' : '');
+    box.appendChild(d);
+  }
+  const host = role === 'host';
+  $('#botsRow').style.display = host ? 'flex' : 'none';
+  $('#botsChk').checked = botsOn;
+  $('#startBtn').style.display = host ? 'block' : 'none';
+  $('#waitTxt').textContent = host ? 'Share the invite link, then start when everyone is in.' : 'Waiting for the host to start the game...';
+}
+function renderOver(v) {
+  const w = v.w;
+  $('#winner').textContent = (dn[w] || 'PILOT').toUpperCase() + ' WINS';
+  $('#winner').style.color = COLOURS[w] || '#fff';
+  const box = $('#finalSlots'); box.innerHTML = '';
+  [0, 1, 2].filter(i => v.s[i][0]).sort((a, b) => v.s[b][7] - v.s[a][7]).forEach(i => {
+    const d = document.createElement('div'); d.className = 'slot';
+    d.innerHTML = '<i></i><span></span><small></small>'; d.querySelector('i').style.color = COLOURS[i];
+    d.querySelector('span').textContent = dn[i] || ('Pilot ' + (i + 1));
+    d.querySelector('small').textContent = v.s[i][7] + ' kills / ' + v.s[i][8] + ' deaths';
+    box.appendChild(d);
+  });
+  const host = role === 'host';
+  $('#againBtn').style.display = host ? 'block' : 'none';
+  $('#againWait').textContent = host ? '' : 'Waiting for the host to start a rematch...';
+}
+let hudKey = '';
+function updateHud(v) {
+  const key = JSON.stringify([v.s.map(s => [s[0], s[7], s[8]]), dn, mySlot]);
+  if (key === hudKey) return; hudKey = key;
+  const hud = $('#hud'); hud.innerHTML = '';
+  v.s.forEach((s, i) => {
+    const t = document.createElement('div'); t.className = 'tile' + (i === mySlot ? ' me' : '') + (s[0] ? '' : ' off');
+    t.style.color = COLOURS[i];
+    t.innerHTML = '<div class="n"></div><div class="s">' + s[7] + '<small> / ' + WIN_SCORE + '</small></div><div class="d">deaths ' + s[8] + '</div>';
+    t.querySelector('.n').textContent = (i === mySlot ? '▸ ' : '') + (dn[i] || 'Pilot ' + (i + 1));
+    hud.appendChild(t);
+  });
+}
+
+/* ---------------- View (interpolated for clients) ---------------- */
+const lw = (a, b, t, size) => (Math.abs(b - a) > size / 2 ? b : a + (b - a) * t);
+function la(a, b, t) { let d = b - a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return a + d * t; }
+function interp(p, c, a) {
+  const out = { p: c.p, w: c.w, tm: c.tm, e: [], s: [], b: [], r: [] };
+  for (let i = 0; i < c.s.length; i++) {
+    const sp = p.s[i], sc = c.s[i];
+    if (!(sp && sp[0] && sc[0] && sp[4] && sc[4])) { out.s.push(sc); continue; }
+    out.s.push([sc[0], lw(sp[1], sc[1], a, W), lw(sp[2], sc[2], a, H), la(sp[3], sc[3], a), sc[4], sc[5], sc[6], sc[7], sc[8], sc[9], sc[10]]);
+  }
+  const pb = new Map(p.b.map(b => [b[0], b]));
+  for (const b of c.b) { const o = pb.get(b[0]); out.b.push(o ? [b[0], lw(o[1], b[1], a, W), lw(o[2], b[2], a, H), b[3]] : b); }
+  const pr = new Map(p.r.map(r => [r[0], r]));
+  for (const r of c.r) { const o = pr.get(r[0]); out.r.push(o ? [r[0], lw(o[1], r[1], a, W), lw(o[2], r[2], a, H), r[3], la(o[4], r[4], a)] : r); }
+  return out;
+}
+function viewSnap() {
+  if (role === 'host') return hostSnap;
+  if (!snapCur) return null;
+  if (snapPrev === snapCur) return snapCur;
+  return interp(snapPrev, snapCur, Math.min(1, (performance.now() - curAt) / interval));
+}
+
+/* ---------------- Rendering ---------------- */
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(innerWidth * dpr); canvas.height = Math.floor(innerHeight * dpr);
+}
+addEventListener('resize', resize); resize();
+
+function rockPath(id, size) {
+  const R = ROCK_R[size], n = 10; let h = id * 2654435761 >>> 0;
+  const rr = () => { h = (h ^ (h << 13)) >>> 0; h = (h ^ (h >>> 17)) >>> 0; h = (h ^ (h << 5)) >>> 0; return (h % 1000) / 1000; };
+  const pts = [];
+  for (let i = 0; i < n; i++) { const a = i / n * 6.2832, r = R * (0.72 + rr() * 0.36); pts.push([Math.cos(a) * r, Math.sin(a) * r]); }
+  return pts;
+}
+const rockCache = new Map();
+function drawRock(r) {
+  const key = r[0]; let pts = rockCache.get(key);
+  if (!pts) { pts = rockPath(r[0], r[3]); rockCache.set(key, pts); if (rockCache.size > 400) rockCache.delete(rockCache.keys().next().value); }
+  ctx.save(); ctx.translate(r[1], r[2]); ctx.rotate(r[4]);
+  ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
+  ctx.fillStyle = '#0b1218'; ctx.fill(); ctx.strokeStyle = '#b9c7d0'; ctx.lineWidth = 2; ctx.shadowColor = '#7aa0b5'; ctx.shadowBlur = 8; ctx.stroke();
+  ctx.restore();
+}
+function drawShip(s, i, t) {
+  const col = COLOURS[i];
+  ctx.save(); ctx.translate(s[1], s[2]); ctx.rotate(s[3]);
+  if (s[5]) ctx.globalAlpha = 0.35 + 0.5 * Math.abs(Math.sin(t * 14));
+  if (s[6]) {
+    const f = 8 + Math.random() * 9;
+    ctx.beginPath(); ctx.moveTo(-8, -5); ctx.lineTo(-8 - f, 0); ctx.lineTo(-8, 5);
+    ctx.strokeStyle = '#ffd23f'; ctx.shadowColor = '#ff8a00'; ctx.shadowBlur = 12; ctx.lineWidth = 2; ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(-13, -11); ctx.lineTo(-7, 0); ctx.lineTo(-13, 11); ctx.closePath();
+  ctx.fillStyle = '#050a10'; ctx.fill(); ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.shadowColor = col; ctx.shadowBlur = 14; ctx.stroke();
+  ctx.restore();
+}
+function wrapped(x, y, m, fn) {
+  const xs = [0], ys = [0];
+  if (x < m) xs.push(W); else if (x > W - m) xs.push(-W);
+  if (y < m) ys.push(H); else if (y > H - m) ys.push(-H);
+  for (const ox of xs) for (const oy of ys) { ctx.save(); ctx.translate(ox, oy); fn(); ctx.restore(); }
+}
+
+let lastT = performance.now(), acc = 0, netAcc = 0, cometT = 3;
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+
+  /* host: run the real game */
+  if (role === 'host') {
+    acc += dt;
+    while (acc >= STEP) {
+      setBits(sim.ships[0], bits());
+      Sim.step(sim, STEP); acc -= STEP;
+      if (sim.ev.length) { const ev = sim.ev; sim.ev = []; ev.forEach(handleEvent); if (!practice) netEv.push(...ev); }
+      netAcc += STEP;
+      if (netAcc >= 1 / 30) { netAcc = 0; if (!practice) netSend(); }
+    }
+    hostSnap = Sim.snapshot(sim);
+  }
+
+  const v = viewSnap();
+
+  /* screen switching */
+  let want = curScreen;
+  if (!role) want = 'menu';
+  else if (!v || v.p === 'lobby') want = 'lobby';
+  else want = v.p === 'play' ? 'game' : 'over';
+  if (want !== curScreen) {
+    curScreen = want;
+    showPanel(want === 'game' ? null : want);
+    if (want === 'lobby') renderLobby();
+    if (want === 'over') renderOver(v);
+    if (want === 'game' && document.activeElement) document.activeElement.blur();
+    hudKey = '';
+  }
+  if (v && curScreen !== 'menu' && curScreen !== 'lobby') updateHud(v);
+
+  /* particles / comets */
+  parts = parts.filter(p => (p.life -= dt) > 0);
+  for (const p of parts) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.985; p.vy *= 0.985; }
+  cometT -= dt; if (cometT <= 0) { cometT = 4 + Math.random() * 6; spawnComet(); }
+  comets = comets.filter(c => (c.life -= dt) > 0);
+  for (const c of comets) { c.x += c.vx * dt; c.y += c.vy * dt; }
+
+  /* draw */
+  const dpr = window.devicePixelRatio || 1, sc = Math.min(innerWidth / W, innerHeight / H);
+  const ox = (innerWidth - W * sc) / 2, oy = (innerHeight - H * sc) / 2;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(dpr * sc, 0, 0, dpr * sc, dpr * ox, dpr * oy);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+
+  const bg = ctx.createRadialGradient(W * 0.5, H * 0.45, 40, W * 0.5, H * 0.5, W * 0.7);
+  bg.addColorStop(0, '#0d1430'); bg.addColorStop(0.6, '#070a18'); bg.addColorStop(1, '#02030a');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const T = now / 1000;
+  for (const s of stars) {
+    const sp = [6, 14, 28][s.l], x = ((s.x - T * sp) % W + W) % W;
+    ctx.globalAlpha = 0.35 + 0.35 * Math.sin(T * 2 + s.tw) + s.l * 0.1;
+    ctx.fillStyle = s.l === 2 ? '#fff' : '#9fb8ff'; const z = 1 + s.l * 0.7; ctx.fillRect(x, s.y, z, z);
+  }
+  ctx.globalAlpha = 1;
+  for (const c of comets) {
+    const mag = Math.hypot(c.vx, c.vy), tx = c.x - c.vx / mag * 130, ty = c.y - c.vy / mag * 130;
+    const g = ctx.createLinearGradient(c.x, c.y, tx, ty); g.addColorStop(0, 'rgba(180,230,255,.9)'); g.addColorStop(1, 'rgba(180,230,255,0)');
+    ctx.strokeStyle = g; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(tx, ty); ctx.stroke();
+  }
+
+  if (v) {
+    for (const r of v.r) wrapped(r[1], r[2], ROCK_R[r[3]] + 4, () => drawRock(r));
+    for (const b of v.b) wrapped(b[1], b[2], 8, () => {
+      ctx.beginPath(); ctx.arc(b[1], b[2], 3, 0, 6.283); ctx.fillStyle = '#fff'; ctx.shadowColor = COLOURS[b[3]]; ctx.shadowBlur = 14; ctx.fill();
+    });
+    if (v.p !== 'lobby') {
+      v.s.forEach((s, i) => {
+        if (!s[0] || !s[4]) return;
+        wrapped(s[1], s[2], 30, () => {
+          drawShip(s, i, T);
+          ctx.save(); ctx.shadowBlur = 0; ctx.font = '11px "Courier New",monospace'; ctx.textAlign = 'center';
+          ctx.fillStyle = COLOURS[i]; ctx.globalAlpha = 0.9;
+          ctx.fillText(i === mySlot ? '▾ YOU' : (dn[i] || ''), s[1], s[2] - 24); ctx.restore();
+        });
+      });
+    }
+  }
+  for (const p of parts) {
+    const a = Math.max(0, p.life / p.max), m = Math.hypot(p.vx, p.vy) || 1;
+    ctx.globalAlpha = a; ctx.strokeStyle = p.col; ctx.lineWidth = 2; ctx.shadowColor = p.col; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx / m * p.len, p.y - p.vy / m * p.len); ctx.stroke();
+  }
+  ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  if (v && v.p === 'play' && v.s[mySlot] && v.s[mySlot][0] && !v.s[mySlot][4]) {
+    ctx.fillStyle = '#ffd23f'; ctx.font = 'bold 22px "Courier New",monospace'; ctx.textAlign = 'center';
+    ctx.fillText('DESTROYED  -  RESPAWN IN ' + Math.ceil(v.s[mySlot][9]), W / 2, H / 2);
+  }
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(79,209,255,.35)'; ctx.lineWidth = 2 / sc; ctx.strokeRect(0, 0, W, H);
+
+  requestAnimationFrame(frame);
+}
+
+/* ---------------- Wire up buttons ---------------- */
+$('#name').value = store.get('name', '');
+$('#hostBtn').onclick = hostGame;
+$('#joinBtn').onclick = joinGame;
+$('#practiceBtn').onclick = startPractice;
+$('#code').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+$('#botsChk').onchange = e => { if (role === 'host') { botsOn = e.target.checked; broadcastLobby(); } };
+$('#startBtn').onclick = hostStart;
+$('#againBtn').onclick = () => { if (role === 'host') { Sim.start(sim, buildCfg()); } };
+$('#copyBtn').onclick = () => {
+  const url = inviteUrl();
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast('Invite link copied'), () => toast('Copy it from the box above'));
+};
+const leave = () => { location.href = location.pathname; };
+$('#leaveBtn').onclick = leave; $('#leaveBtn2').onclick = leave; $('#exitBtn').onclick = leave;
+const room = new URLSearchParams(location.search).get('room');
+if (room) { $('#code').value = room.toUpperCase(); menuMsg('Enter your callsign, then press Join.'); }
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
